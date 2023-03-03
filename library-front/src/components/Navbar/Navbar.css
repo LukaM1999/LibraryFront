@@ -1,0 +1,9 @@
+@media only screen and (max-width: 768px) {
+  .Navbar {
+    position: fixed;
+    top: 0px;
+    border: 1px solid;
+    height: 10%;
+    width: 100%;
+  }
+}

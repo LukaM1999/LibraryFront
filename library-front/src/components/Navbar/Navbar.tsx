@@ -1,23 +1,8 @@
-import { FC } from 'react'
-import NavButton from '../NavButton/NavButton'
-import { AiFillHome as HomeIcon } from 'react-icons/ai'
-import { FaUserAlt as ProfileIcon } from 'react-icons/fa'
+import React, { FC } from 'react'
 import './Navbar.css'
 
 interface NavbarProps {}
 
-const Navbar: FC<NavbarProps> = () => (
-  <>
-    <label className='hamburger-menu'>
-      <input type='checkbox' />
-    </label>
-    <aside className='sidebar'>
-      <nav>
-        <NavButton to='/' icon={<HomeIcon />} text='Home' />
-        <NavButton to='/profile' icon={<ProfileIcon />} text='Profile' />
-      </nav>
-    </aside>
-  </>
-)
+const Navbar: FC<NavbarProps> = () => <nav className='Navbar'></nav>
 
 export default Navbar

@@ -1,4 +1,4 @@
-.footer {
+.Footer {
   position: fixed;
   bottom: 0;
   height: 75px;
@@ -17,10 +17,4 @@
 
 .footer .nav-button .text {
   font-size: 10px;
-}
-
-@media only screen and (min-width: 769px) {
-  .footer {
-    display: none;
-  }
 }

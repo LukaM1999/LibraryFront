@@ -3,6 +3,6 @@ import './Footer.css'
 
 interface FooterProps {}
 
-const Footer: FC<FooterProps> = () => <footer className='footer'></footer>
+const Footer: FC<FooterProps> = () => <footer className='Footer'></footer>
 
 export default Footer

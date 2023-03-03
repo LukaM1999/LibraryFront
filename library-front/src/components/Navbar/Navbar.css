@@ -1,9 +1,9 @@
-@media only screen and (min-width: 769px) {
-  .navbar {
+@media only screen and (max-width: 768px) {
+  .Navbar {
     position: fixed;
-    left: 0px;
+    top: 0px;
     border: 1px solid;
-    height: 100%;
-    width: 5em;
+    height: 10%;
+    width: 100%;
   }
 }

@@ -1,14 +1,5 @@
-.book-card {
+.BookCard {
   height: 350px;
   min-width: 70%;
-  width: 100px;
   border: 1px solid #0000ff;
-}
-
-@media only screen and (min-width: 769px) {
-  .book-card {
-    width: 250px;
-    min-width: unset;
-    border: 1px solid #0000ff;
-  }
 }

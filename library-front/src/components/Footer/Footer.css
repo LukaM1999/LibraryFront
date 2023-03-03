@@ -1,13 +1,7 @@
-.footer {
+.Footer {
   position: fixed;
   bottom: 0;
   height: 10%;
   border: 1px solid;
   width: 100%;
-}
-
-@media only screen and (min-width: 769px) {
-  .footer {
-    display: none;
-  }
 }

@@ -8,14 +8,14 @@ import './HomePage.css'
 interface HomePageProps {}
 
 const HomePage: FC<HomePageProps> = () => (
-  <div className='HomePage'>
+  <div className='home-page'>
     <Header />
     <Navbar />
     <div className='home-container'>
-      <BookCard></BookCard>
-      <BookCard></BookCard>
-      <BookCard></BookCard>
-      <BookCard></BookCard>
+      <BookCard />
+      <BookCard />
+      <BookCard />
+      <BookCard />
     </div>
     <Footer />
   </div>

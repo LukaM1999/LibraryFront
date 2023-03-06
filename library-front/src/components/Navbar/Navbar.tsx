@@ -3,6 +3,6 @@ import './Navbar.css'
 
 interface NavbarProps {}
 
-const Navbar: FC<NavbarProps> = () => <nav className='Navbar'></nav>
+const Navbar: FC<NavbarProps> = () => <div className='Navbar'></div>
 
 export default Navbar

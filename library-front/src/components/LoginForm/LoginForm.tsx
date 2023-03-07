@@ -1,28 +1,24 @@
 import { FC, useState } from 'react'
-import showModal from '../Modal/Modal'
-import { removeModal } from '../Modal/ModalManager'
-import RegisterForm from '../RegisterForm/RegisterForm'
+import { setJwt } from '../../helpers/jwt-helper'
+import { login, LoginRequest } from '../../services/AuthService'
 import './LoginForm.css'
 
-interface LoginProps {
-  modalId: string
-  onClose: () => void
-}
+interface LoginProps {}
 
-const LoginForm: FC<LoginProps> = ({ modalId, onClose }) => {
+const LoginForm: FC<LoginProps> = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log('Submitting login form')
-    onClose()
-  }
+    const loginRequest: LoginRequest = {
+      email,
+      password,
+    }
+    const { data } = await login(loginRequest)
+    if (!data) return
 
-  const handleRegister = () => {
-    console.log('Registering')
-    onClose()
-    showModal(modalId, <RegisterForm onRegister={() => {}} />)
+    setJwt(data.accessToken, data.refreshToken, data.expiration)
   }
 
   return (
@@ -57,9 +53,6 @@ const LoginForm: FC<LoginProps> = ({ modalId, onClose }) => {
       <footer className='login-form-footer'>
         <button type='submit' className='login-form-login-button'>
           Login
-        </button>
-        <button className='login-form-register-button' type='button' onClick={handleRegister}>
-          Register
         </button>
       </footer>
     </form>

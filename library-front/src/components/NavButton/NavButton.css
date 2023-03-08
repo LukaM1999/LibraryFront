@@ -1,0 +1,39 @@
+.nav-button {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-button:hover {
+  background-color: #444;
+}
+
+.nav-button .icon {
+  font-size: 40px;
+  color: #1be4be;
+}
+
+.nav-button.active {
+  background-color: #1b41e4;
+}
+
+.nav-button.active .icon,
+.nav-button.active .text {
+  color: #fff;
+}
+
+.nav-button .text {
+  font-size: 15px;
+  font-weight: bold;
+  color: #1be4be;
+  margin-top: -10px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}

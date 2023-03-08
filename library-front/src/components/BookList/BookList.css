@@ -1,4 +1,4 @@
-.home-container {
+.book-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -8,8 +8,8 @@
 }
 
 @media only screen and (min-width: 769px) {
-  .home-container {
-    justify-content: space-between;
+  .book-list {
+    justify-content: flex-start;
     gap: 2em;
     padding: 8em;
   }

@@ -2,8 +2,24 @@
   position: fixed;
   bottom: 0;
   height: 10%;
-  border: 1px solid;
   width: 100%;
+  background-color: #e41b41;
+  color: #1be4be;
+  display: flex;
+}
+
+.footer .nav-button {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.footer .nav-button .icon {
+  font-size: 40px;
+}
+
+.footer .nav-button .text {
+  font-size: 10px;
 }
 
 @media only screen and (min-width: 769px) {

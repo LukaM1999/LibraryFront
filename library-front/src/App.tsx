@@ -1,9 +1,11 @@
-import { RouterProvider } from 'react-router'
-import './App.css'
-import router from './router/router'
+import { Outlet } from 'react-router'
 import axios from 'axios'
 import { refreshToken } from './services/AuthService'
 import { setJwt } from './helpers/jwt-helper'
+import Header from './components/Header/Header'
+import Navbar from './components/Navbar/Navbar'
+import Footer from './components/Footer/Footer'
+import './App.css'
 
 axios.interceptors.request.use(
   async (config) => {
@@ -23,25 +25,27 @@ axios.interceptors.response.use(
   },
   async function (error) {
     const originalRequest = error.config
-    if (
-      (error.response.status === 403 || error.response.status === 401) &&
-      !originalRequest._retry
-    ) {
-      originalRequest._retry = true
-      const { data } = await refreshToken()
-      setJwt(data.accessToken, data.refreshToken, data.expiration)
-      axios.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`
-      return axios(originalRequest)
+    if (![401, 403].includes(error.response.status) || originalRequest._retry) {
+      return Promise.reject(error)
     }
-    return Promise.reject(error)
+    originalRequest._retry = true
+    const { data } = await refreshToken()
+    setJwt(data.accessToken, data.refreshToken, data.expiration)
+    axios.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`
+    return axios(originalRequest)
   },
 )
 
 function App() {
   return (
-    <div className='app'>
-      <RouterProvider router={router} />
-    </div>
+    <>
+      <Header />
+      <Navbar />
+      <div className='app'>
+        <Outlet />
+      </div>
+      <Footer />
+    </>
   )
 }
 

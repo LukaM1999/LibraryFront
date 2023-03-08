@@ -1,7 +1,7 @@
 .nav-button {
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 5px 10px;
   cursor: pointer;
   transition: background-color 0.2s;
   display: flex;
@@ -9,7 +9,7 @@
 }
 
 .nav-button:hover {
-  background-color: #444;
+  background-color: #4a3832;
 }
 
 .nav-button .icon {
@@ -18,12 +18,12 @@
 }
 
 .nav-button.active {
-  background-color: #1b41e4;
+  background-color: #4a3832;
 }
 
 .nav-button.active .icon,
 .nav-button.active .text {
-  color: #fff;
+  color: #fff1e1;
 }
 
 .nav-button .text {

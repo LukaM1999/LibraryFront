@@ -1,11 +1,14 @@
 import { Outlet } from 'react-router'
 import axios from 'axios'
 import { refreshToken } from './services/AuthService'
-import { setJwt } from './helpers/jwt-helper'
+import { JwtRole, setJwt } from './helpers/jwt-helper'
 import Header from './components/Header/Header'
 import Navbar from './components/Navbar/Navbar'
 import Footer from './components/Footer/Footer'
+import { ToastContainer } from 'react-toastify'
 import './App.css'
+import 'react-toastify/dist/ReactToastify.css'
+import jwtDecode from 'jwt-decode'
 
 axios.interceptors.request.use(
   async (config) => {
@@ -30,7 +33,13 @@ axios.interceptors.response.use(
     }
     originalRequest._retry = true
     const { data } = await refreshToken()
-    setJwt(data.accessToken, data.refreshToken, data.expiration)
+    const role: JwtRole = jwtDecode(data.accessToken)
+    setJwt(
+      data.accessToken,
+      data.refreshToken,
+      data.expiration,
+      role['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'],
+    )
     axios.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`
     return axios(originalRequest)
   },
@@ -39,6 +48,7 @@ axios.interceptors.response.use(
 function App() {
   return (
     <>
+      <ToastContainer />
       <Header />
       <Navbar />
       <div className='app'>

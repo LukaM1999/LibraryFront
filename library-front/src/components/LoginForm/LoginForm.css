@@ -4,12 +4,11 @@
   align-items: center;
   align-content: center;
   padding: 1rem;
-  background-color: #f1f1f1;
+  background-color: #fff1e1;
   color: black;
-  width: 70%;
   border-radius: 0.5rem;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
-  max-width: 400px;
+  max-width: 600px;
   align-self: center;
 }
 
@@ -36,7 +35,7 @@
 
 .login-form-login-button {
   font-weight: bold;
-  background-color: #007bff;
+  background-color: #972527;
   color: white;
   padding: 0.5rem 1rem;
   border: none;
@@ -47,15 +46,7 @@
 }
 
 .login-form-login-button:hover {
-  background-color: #0062cc;
-}
-
-.login-form-register-button {
-  background-color: #f0ad4e;
-}
-
-.login-form-register-button:hover {
-  background-color: #ec971f;
+  background-color: #aa2723;
 }
 
 .login-form-footer {
@@ -63,4 +54,8 @@
   flex-direction: row;
   align-items: center;
   padding: 1rem;
+}
+
+.app {
+  height: 100vh;
 }

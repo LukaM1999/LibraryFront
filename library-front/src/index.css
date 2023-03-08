@@ -14,13 +14,8 @@
   -webkit-text-size-adjust: 100%;
 }
 
-#root {
-  height: 100vh;
-}
-
 body {
   margin: 0px;
-  height: 100vh;
 }
 
 h1 {

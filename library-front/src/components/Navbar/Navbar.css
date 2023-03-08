@@ -11,7 +11,7 @@
     --bar-width: 60px;
     --bar-height: 8px;
     --hamburger-gap: 10px;
-    --foreground: #e41b41;
+    --foreground: #aa2723;
     --background: #1be4be;
     --hamburger-margin: 15px;
     --animation-timing: 200ms ease-in-out;
@@ -35,11 +35,6 @@
     cursor: pointer;
   }
 
-  .hamburger-menu:has(input:checked) {
-    --foreground: #1be4be;
-    --background: #e41b41;
-  }
-
   .hamburger-menu:has(input:focus-visible)::before,
   .hamburger-menu:has(input:focus-visible)::after,
   .hamburger-menu input:focus-visible {
@@ -53,12 +48,12 @@
     content: '';
     width: var(--bar-width);
     height: var(--bar-height);
-    background-color: var(--foreground);
+    background-color: var(--background);
+    color: var(--foreground);
     border-radius: 9999px;
     transform-origin: left center;
     transition: opacity var(--animation-timing), width var(--animation-timing),
-      rotate var(--animation-timing), translate var(--animation-timing),
-      background-color var(--animation-timing);
+      rotate var(--animation-timing), translate var(--animation-timing);
   }
 
   .hamburger-menu input {

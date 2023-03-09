@@ -33,7 +33,7 @@
   width: 100%;
 }
 
-.login-form-login-button {
+.login-form-submit-button {
   font-weight: bold;
   background-color: #972527;
   color: white;
@@ -45,7 +45,7 @@
   transition: all 0.2s ease-in-out;
 }
 
-.login-form-login-button:hover {
+.login-form-submit-button:hover {
   background-color: #aa2723;
 }
 

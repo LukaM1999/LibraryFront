@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
+import { getItem } from './StorageService'
 
 const url = `${import.meta.env.VITE_LIBRARY_API}/api/Auth/`
 
@@ -6,12 +7,12 @@ export const login = async (loginRequest: LoginRequest): Promise<AxiosResponse<L
   return axios.post<LoginResponse>(`${url}/login`, loginRequest)
 }
 
-export const refreshToken = async (): Promise<AxiosResponse<RefreshTokenResponse>> => {
-  const accessToken = localStorage.getItem('accessToken')
-  const refreshToken = localStorage.getItem('refreshToken')
+export const refreshAccessToken = async (): Promise<AxiosResponse<RefreshTokenResponse>> => {
+  const jwt = JSON.parse(getItem('jwt') || '{}')
+  if (!jwt.accessToken || !jwt.refreshToken) return Promise.reject()
   return axios.post<RefreshTokenResponse>(`${url}/refresh-token`, {
-    accessToken,
-    refreshToken,
+    accessToken: jwt.accessToken,
+    refreshToken: jwt.refreshToken,
   })
 }
 

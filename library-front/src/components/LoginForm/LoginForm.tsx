@@ -30,14 +30,18 @@ const LoginForm: FC<LoginProps> = () => {
         expiration: data.expiration,
         role: role[roleKey],
       }
-      setJwt(token)
-      setJwtToken(token)
+      updateJwt(token)
     } catch (error: any) {
       toast.error('Email or password incorrect')
       throw new Error(error)
     }
     toast.success('Successfully logged in!')
     router.navigate('/')
+  }
+
+  function updateJwt(token: Jwt) {
+    setJwt(token)
+    setJwtToken(token)
   }
 
   return (
@@ -70,7 +74,7 @@ const LoginForm: FC<LoginProps> = () => {
       />
       <br />
       <footer className='login-form-footer'>
-        <button type='submit' className='login-form-login-button'>
+        <button type='submit' className='login-form-submit-button'>
           Login
         </button>
       </footer>

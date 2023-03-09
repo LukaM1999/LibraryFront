@@ -10,6 +10,10 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = ({ jwt, setJwt }) => {
   const handleLogout = () => {
+    clearAndNullifyJwt
+  }
+
+  function clearAndNullifyJwt() {
     clearJwt()
     setJwt(null)
   }

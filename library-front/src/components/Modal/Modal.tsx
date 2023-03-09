@@ -7,15 +7,15 @@ import { addModal } from './ModalManager'
 interface ModalProps {
   id: string
   isOpen: boolean
-  onClose: () => void
+  closeModal: () => void
   children: ReactNode
 }
 
-const Modal: FC<ModalProps> = ({ id, isOpen, onClose, children }) => {
+const Modal: FC<ModalProps> = ({ id, isOpen, closeModal, children }) => {
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onClose()
+        closeModal()
       }
     }
 
@@ -23,12 +23,12 @@ const Modal: FC<ModalProps> = ({ id, isOpen, onClose, children }) => {
       const modalContent = document.querySelector('.modal-content')
 
       if (modalContent && !modalContent.contains(event.target as Node)) {
-        onClose()
+        closeModal()
       }
     }
 
     if (isOpen) {
-      addModal(id, onClose)
+      addModal(id, closeModal)
       document.addEventListener('keydown', handleEscapeKey)
       document.addEventListener('mousedown', handleClickOutside)
     }
@@ -37,7 +37,7 @@ const Modal: FC<ModalProps> = ({ id, isOpen, onClose, children }) => {
       document.removeEventListener('keydown', handleEscapeKey)
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [isOpen, onClose])
+  }, [isOpen, closeModal])
 
   const modalRef = useRef<HTMLDivElement>(null)
 
@@ -59,9 +59,9 @@ const Modal: FC<ModalProps> = ({ id, isOpen, onClose, children }) => {
 
   return ReactDOM.createPortal(
     <div className={`modal ${isOpen ? 'show' : 'hide'}`}>
-      <div className='modal-overlay' onClick={onClose} />
+      <div className='modal-overlay' onClick={closeModal} />
       <div className='modal-content' ref={modalRef}>
-        <button className='close-button' onClick={onClose}>
+        <button className='close-button' onClick={closeModal}>
           X
         </button>
         {children}
@@ -79,7 +79,7 @@ const showModal = (modalId: string, content: ReactNode) => {
   }
 
   const modal = (
-    <Modal id={modalId} isOpen={true} onClose={handleClose}>
+    <Modal id={modalId} isOpen={true} closeModal={handleClose}>
       {content}
     </Modal>
   )

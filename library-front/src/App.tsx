@@ -1,6 +1,6 @@
 import { Outlet, useOutletContext } from 'react-router'
 import axios from 'axios'
-import { refreshToken } from './services/AuthService'
+import { refreshAccessToken } from './services/AuthService'
 import { Jwt, JwtRole, roleKey, setJwt } from './helpers/jwt-helper'
 import Header from './components/Header/Header'
 import Navbar from './components/Navbar/Navbar'
@@ -10,10 +10,11 @@ import './App.css'
 import 'react-toastify/dist/ReactToastify.css'
 import jwtDecode from 'jwt-decode'
 import { useEffect, useState } from 'react'
+import { getItem } from './services/StorageService'
 
 axios.interceptors.request.use(
   async (config) => {
-    let jwt = JSON.parse(localStorage.getItem('jwt') || '{}')
+    let jwt = JSON.parse(getItem('jwt') || '{}')
     if (!jwt || !jwt?.accessToken) return config
     config.headers.Authorization = `Bearer ${jwt.accessToken}`
     return config
@@ -33,7 +34,7 @@ axios.interceptors.response.use(
       return Promise.reject(error)
     }
     originalRequest._retry = true
-    const { data } = await refreshToken()
+    const { data } = await refreshAccessToken()
     const role: JwtRole = jwtDecode(data.accessToken)
     setJwt({
       accessToken: data.accessToken,
@@ -55,7 +56,7 @@ function App() {
   const [jwtToken, setJwtToken] = useState<Jwt | null>(null)
 
   useEffect(() => {
-    const jwt: Jwt = JSON.parse(localStorage.getItem('jwt') || '{}')
+    const jwt: Jwt = JSON.parse(getItem('jwt') || '{}')
     setJwtToken(jwt)
   }, [])
 

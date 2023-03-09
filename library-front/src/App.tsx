@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import jwtDecode from 'jwt-decode'
 import { useEffect, useState } from 'react'
 import { getItem } from './services/StorageService'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 axios.interceptors.request.use(
   async (config) => {
@@ -52,6 +53,8 @@ interface ContextType {
   setJwtToken: React.Dispatch<React.SetStateAction<Jwt | null>>
 }
 
+const queryClient = new QueryClient()
+
 function App() {
   const [jwtToken, setJwtToken] = useState<Jwt | null>(null)
 
@@ -61,7 +64,7 @@ function App() {
   }, [])
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <ToastContainer />
       <Header jwt={jwtToken} setJwt={setJwtToken} />
       <Navbar />
@@ -69,7 +72,7 @@ function App() {
         <Outlet context={{ jwtToken, setJwtToken }} />
       </div>
       <Footer />
-    </>
+    </QueryClientProvider>
   )
 }
 

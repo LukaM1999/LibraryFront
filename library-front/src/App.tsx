@@ -1,7 +1,7 @@
-import { Outlet } from 'react-router'
+import { Outlet, useOutletContext } from 'react-router'
 import axios from 'axios'
 import { refreshToken } from './services/AuthService'
-import { JwtRole, setJwt } from './helpers/jwt-helper'
+import { Jwt, JwtRole, roleKey, setJwt } from './helpers/jwt-helper'
 import Header from './components/Header/Header'
 import Navbar from './components/Navbar/Navbar'
 import Footer from './components/Footer/Footer'
@@ -9,12 +9,13 @@ import { ToastContainer } from 'react-toastify'
 import './App.css'
 import 'react-toastify/dist/ReactToastify.css'
 import jwtDecode from 'jwt-decode'
+import { useEffect, useState } from 'react'
 
 axios.interceptors.request.use(
   async (config) => {
-    let token = localStorage.getItem('accessToken')
-    if (!token) return config
-    config.headers.Authorization = `Bearer ${token}`
+    let jwt = JSON.parse(localStorage.getItem('jwt') || '{}')
+    if (!jwt || !jwt?.accessToken) return config
+    config.headers.Authorization = `Bearer ${jwt.accessToken}`
     return config
   },
   function (error) {
@@ -28,35 +29,51 @@ axios.interceptors.response.use(
   },
   async function (error) {
     const originalRequest = error.config
-    if (![401, 403].includes(error.response.status) || originalRequest._retry) {
+    if (![401, 403].includes(error.response?.status) || originalRequest._retry) {
       return Promise.reject(error)
     }
     originalRequest._retry = true
     const { data } = await refreshToken()
     const role: JwtRole = jwtDecode(data.accessToken)
-    setJwt(
-      data.accessToken,
-      data.refreshToken,
-      data.expiration,
-      role['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'],
-    )
+    setJwt({
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+      expiration: data.expiration,
+      role: role[roleKey],
+    })
     axios.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`
     return axios(originalRequest)
   },
 )
 
+interface ContextType {
+  jwtToken: Jwt
+  setJwtToken: React.Dispatch<React.SetStateAction<Jwt | null>>
+}
+
 function App() {
+  const [jwtToken, setJwtToken] = useState<Jwt | null>(null)
+
+  useEffect(() => {
+    const jwt: Jwt = JSON.parse(localStorage.getItem('jwt') || '{}')
+    setJwtToken(jwt)
+  }, [])
+
   return (
     <>
       <ToastContainer />
-      <Header />
+      <Header jwt={jwtToken} setJwt={setJwtToken} />
       <Navbar />
       <div className='app'>
-        <Outlet />
+        <Outlet context={{ jwtToken, setJwtToken }} />
       </div>
       <Footer />
     </>
   )
+}
+
+export function useJwt() {
+  return useOutletContext<ContextType>()
 }
 
 export default App

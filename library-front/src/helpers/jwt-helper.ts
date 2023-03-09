@@ -1,19 +1,17 @@
+export const roleKey = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
+
 export interface JwtRole {
-  ['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']: string
+  [roleKey]: string
 }
 
-export const setJwt = (
-  accessToken: string,
-  refreshToken: string,
-  expiration: Date,
-  role: string,
-) => {
-  const jwt = {
-    accessToken,
-    refreshToken,
-    expiration: expiration.toString(),
-    role,
-  }
+export interface Jwt {
+  accessToken: string
+  refreshToken: string
+  expiration: Date
+  role: string
+}
+
+export const setJwt = (jwt: Jwt) => {
   localStorage.setItem('jwt', JSON.stringify(jwt))
 }
 

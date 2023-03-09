@@ -1,7 +1,8 @@
 import jwtDecode from 'jwt-decode'
 import { FC, useState } from 'react'
 import { toast } from 'react-toastify'
-import { JwtRole, setJwt } from '../../helpers/jwt-helper'
+import { useJwt } from '../../App'
+import { Jwt, JwtRole, roleKey, setJwt } from '../../helpers/jwt-helper'
 import router from '../../router/router'
 import { login, LoginRequest } from '../../services/AuthService'
 import './LoginForm.css'
@@ -11,6 +12,7 @@ interface LoginProps {}
 const LoginForm: FC<LoginProps> = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const { setJwtToken } = useJwt()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -22,15 +24,17 @@ const LoginForm: FC<LoginProps> = () => {
       const { data } = await login(loginRequest)
       if (!data) return
       const role: JwtRole = jwtDecode(data.accessToken)
-      setJwt(
-        data.accessToken,
-        data.refreshToken,
-        data.expiration,
-        role['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'],
-      )
-    } catch (error) {
+      const token: Jwt = {
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+        expiration: data.expiration,
+        role: role[roleKey],
+      }
+      setJwt(token)
+      setJwtToken(token)
+    } catch (error: any) {
       toast.error('Email or password incorrect')
-      throw new Error()
+      throw new Error(error)
     }
     toast.success('Successfully logged in!')
     router.navigate('/')

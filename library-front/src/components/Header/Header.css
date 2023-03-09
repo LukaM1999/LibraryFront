@@ -1,7 +1,46 @@
 .header {
   position: fixed;
   top: 0px;
-  border: 1px solid;
-  height: 5em;
+  height: 75px;
   width: 100%;
+  background-color: #972527;
+  color: #1be4be;
+  display: flex;
+}
+
+.header-right {
+  display: flex;
+  justify-content: flex-end;
+  align-self: center;
+  flex: 1;
+  padding-right: 1rem;
+  gap: 10px;
+}
+
+.header-right .header-button {
+  max-width: 75px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  background-color: transparent;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: 2px solid #fff1e1;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  width: 7rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.header-right .header-button:hover {
+  background-color: #aa2723;
+}
+
+.header-right .register {
+  background-color: #45b398;
+  border: none;
+}
+
+.header-right .register:hover {
+  background-color: #41c8aa;
 }

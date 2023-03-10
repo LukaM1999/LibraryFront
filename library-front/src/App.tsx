@@ -48,15 +48,21 @@ axios.interceptors.response.use(
   },
 )
 
-interface ContextType {
+interface ContextJwt {
   jwtToken: Jwt
   setJwtToken: React.Dispatch<React.SetStateAction<Jwt | null>>
+}
+
+interface ContextSearch {
+  search: string
+  setSearch: React.Dispatch<React.SetStateAction<string>>
 }
 
 const queryClient = new QueryClient()
 
 function App() {
   const [jwtToken, setJwtToken] = useState<Jwt | null>(null)
+  const [search, setSearch] = useState<string>('')
 
   useEffect(() => {
     const jwt: Jwt = JSON.parse(getItem('jwt') || '{}')
@@ -66,10 +72,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ToastContainer />
-      <Header jwt={jwtToken} setJwt={setJwtToken} />
+      <Header jwt={jwtToken} setJwt={setJwtToken} setSearch={setSearch} />
       <Navbar />
       <div className='app'>
-        <Outlet context={{ jwtToken, setJwtToken }} />
+        <Outlet context={{ jwtToken, setJwtToken, search, setSearch }} />
       </div>
       <Footer />
     </QueryClientProvider>
@@ -77,7 +83,11 @@ function App() {
 }
 
 export function useJwt() {
-  return useOutletContext<ContextType>()
+  return useOutletContext<ContextJwt>()
+}
+
+export function useSearch() {
+  return useOutletContext<ContextSearch>()
 }
 
 export default App

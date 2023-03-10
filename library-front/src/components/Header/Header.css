@@ -8,11 +8,19 @@
   display: flex;
 }
 
+.header-center {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  flex: 1;
+  gap: 10px;
+}
+
 .header-right {
   display: flex;
   justify-content: flex-end;
   align-self: center;
-  flex: 1;
+  flex: 0.25;
   padding-right: 1rem;
   gap: 10px;
 }

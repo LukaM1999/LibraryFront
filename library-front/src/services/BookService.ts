@@ -5,13 +5,13 @@ const url = `${import.meta.env.VITE_LIBRARY_API}/api/Books`
 
 export const getBooksPaged = async (
   booksPagedRequest: BooksPagedRequest,
-): Promise<AxiosResponse<BooksPagedResponse>> => {
-  return axios.get<BooksPagedResponse>(`${url}/paged`, {
+): Promise<AxiosResponse<Book[]>> => {
+  return axios.get<Book[]>(`${url}/paged`, {
     params: {
-      Page: booksPagedRequest.page || 1,
+      PageNumber: booksPagedRequest.page || 1,
       Where: booksPagedRequest.where,
       Order: booksPagedRequest.order,
-      PageLength: booksPagedRequest.pageLenght || 2,
+      PageLength: booksPagedRequest.pageLenght || 3,
     },
   })
 }
@@ -24,11 +24,7 @@ export interface WhereBookQuery {
 
 export interface BooksPagedRequest {
   page?: number
-  where?: WhereBookQuery
+  where?: WhereBookQuery[]
   order?: string[]
   pageLenght?: number
-}
-
-export interface BooksPagedResponse {
-  books: Book[]
 }

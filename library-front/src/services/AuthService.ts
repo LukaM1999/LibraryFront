@@ -11,24 +11,24 @@ export const refreshAccessToken = async (): Promise<AxiosResponse<RefreshTokenRe
   const jwt = JSON.parse(getItem('jwt') || '{}')
   if (!jwt.accessToken || !jwt.refreshToken) return Promise.reject()
   return axios.post<RefreshTokenResponse>(`${url}/refresh-token`, {
-    accessToken: jwt.accessToken,
-    refreshToken: jwt.refreshToken,
+    AccessToken: jwt.accessToken,
+    RefreshToken: jwt.refreshToken,
   })
 }
 
 export interface LoginRequest {
-  email: string
-  password: string
+  Email: string
+  Password: string
 }
 
 export interface LoginResponse {
-  accessToken: string
-  refreshToken: string
-  expiration: Date
+  AccessToken: string
+  RefreshToken: string
+  Expiration: Date
 }
 
 export interface RefreshTokenResponse {
-  accessToken: string
-  refreshToken: string
-  expiration: Date
+  AccessToken: string
+  RefreshToken: string
+  Expiration: Date
 }

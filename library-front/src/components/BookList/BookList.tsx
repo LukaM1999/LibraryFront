@@ -5,21 +5,26 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import './BookList.css'
 import BookCard from '../BookCard/BookCard'
 import { useSearch } from '../../App'
+import { Jwt, JwtRole, roleKey } from '../../helpers/jwt-helper'
+import { getItem } from '../../services/StorageService'
+import { BiBookAdd } from 'react-icons/bi'
 
-interface BookListProps {}
+interface BookListProps {
+  jwt: Jwt | null
+}
 
 export interface Book {
-  id: number
-  title: string
-  description: string
-  isbn: string
-  publishDate: Date
-  authors: Author[]
+  Id: number
+  Title: string
+  Description: string
+  Isbn: string
+  PublishDate: Date
+  Authors: Author[]
 }
 
 export interface Author {
-  firstName: string
-  lastName: string
+  FirstName: string
+  LastName: string
 }
 
 export interface BookPage {
@@ -28,49 +33,29 @@ export interface BookPage {
   nextPage?: number
 }
 
-const searchByAllFields: WhereBookQuery[] = [
+const searchByTitle: WhereBookQuery[] = [
   {
-    field: 'title',
-    value: '',
-    operation: 2,
-  },
-  {
-    field: 'description',
-    value: '',
-    operation: 2,
-  },
-  {
-    field: 'isbn',
-    value: '',
-    operation: 2,
-  },
-  {
-    field: 'publishDate',
-    value: '',
-    operation: 2,
+    Field: 'Title',
+    Value: '',
+    Operation: 2,
   },
 ]
 
-const BookList: FC<BookListProps> = () => {
+const BookList: FC<BookListProps> = ({ jwt }) => {
   const { ref, inView } = useInView({ rootMargin: '20%' })
   const { search } = useSearch()
 
-  useEffect(() => {
-    fetchNextPage({ pageParam: 1 })
-  }, [search])
+  const role = JSON.parse(getItem('jwt') || '{}').role
 
-  const { data, fetchNextPage } = useInfiniteQuery(
+  let { data, fetchNextPage } = useInfiniteQuery(
     ['books'],
     async ({ pageParam = 1 }) => {
       if (search) {
-        console.log(search)
-        for (let whereQuery of searchByAllFields) {
-          whereQuery.value = search
-        }
+        searchByTitle[0].Value = search
       }
       const { data } = await getBooksPaged({
         page: pageParam,
-        where: search ? searchByAllFields : undefined,
+        where: search ? searchByTitle : undefined,
       })
       const bookPage: BookPage = {
         books: data,
@@ -86,6 +71,12 @@ const BookList: FC<BookListProps> = () => {
   )
 
   useEffect(() => {
+    if (!data) return
+    data.pages = []
+    fetchNextPage({ pageParam: 1 })
+  }, [search])
+
+  useEffect(() => {
     if (inView) {
       fetchNextPage()
     }
@@ -94,9 +85,14 @@ const BookList: FC<BookListProps> = () => {
     <>
       <div className='book-list'>
         {data?.pages?.map((page) =>
-          page?.books?.map((book) => <BookCard key={book.id} book={book} />),
+          page?.books?.map((book) => <BookCard key={book.Id} book={book} />),
         )}
       </div>
+      {role && role !== 'User' && (
+        <button className='btn-add-book'>
+          <BiBookAdd size='100%' />
+        </button>
+      )}
       <div ref={ref} />
     </>
   )

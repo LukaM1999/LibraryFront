@@ -17,17 +17,17 @@ const LoginForm: FC<LoginProps> = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const loginRequest: LoginRequest = {
-      email,
-      password,
+      Email: email,
+      Password: password,
     }
     try {
       const { data } = await login(loginRequest)
       if (!data) return
-      const role: JwtRole = jwtDecode(data.accessToken)
+      const role: JwtRole = jwtDecode(data.AccessToken)
       const token: Jwt = {
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
-        expiration: data.expiration,
+        accessToken: data.AccessToken,
+        refreshToken: data.RefreshToken,
+        expiration: data.Expiration,
         role: role[roleKey],
       }
       updateJwt(token)

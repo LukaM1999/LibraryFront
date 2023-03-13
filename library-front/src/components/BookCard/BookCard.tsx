@@ -8,7 +8,7 @@ interface BookCardProps {
 
 const BookCard: FC<BookCardProps> = ({ book }) => (
   <div className='book-card'>
-    <p>{book.title}</p>
+    <p>{book.Title}</p>
   </div>
 )
 

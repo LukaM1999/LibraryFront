@@ -26,7 +26,7 @@ export interface WhereBookQuery {
 export interface BooksPagedRequest {
   page?: number
   where?: WhereBookQuery[]
-  order?: string[]
+  order?: (string | undefined)[] | undefined
   pageLenght?: number
 }
 

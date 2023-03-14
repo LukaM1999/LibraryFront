@@ -7,6 +7,7 @@ import { BiSort as SortIcon } from 'react-icons/bi'
 import './Header.css'
 import FilterForm, { BookFilter } from '../FilterForm/FilterForm'
 import { Modal } from '../Modal/Modal'
+import SortForm from '../SortForm/SortForm'
 
 interface HeaderProps {
   jwt: Jwt | null
@@ -14,12 +15,23 @@ interface HeaderProps {
   setSearch: (search: string) => void
   filters: BookFilter[]
   setFilters: React.Dispatch<React.SetStateAction<BookFilter[]>>
+  sort: (string | undefined)[] | undefined
+  setSort: React.Dispatch<React.SetStateAction<(string | undefined)[] | undefined>>
 }
 
-const Header: FC<HeaderProps> = ({ jwt, setJwt, setSearch, filters, setFilters }) => {
+const Header: FC<HeaderProps> = ({
+  jwt,
+  setJwt,
+  setSearch,
+  filters,
+  setFilters,
+  sort,
+  setSort,
+}) => {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true)
   const [prevScrollPos, setPrevScrollPos] = useState(0)
-  const [modalVisible, setModalVisible] = useState(false)
+  const [filterModalVisible, setFilterModalVisible] = useState(false)
+  const [sortModalVisible, setSortModalVisible] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,34 +59,51 @@ const Header: FC<HeaderProps> = ({ jwt, setJwt, setSearch, filters, setFilters }
     setSearch(e.target.value)
   }
 
-  const handleFilter = () => {
-    setModalVisible(true)
+  const showFilterModal = () => {
+    setFilterModalVisible(true)
   }
 
-  const hideModal = () => {
-    setModalVisible(false)
+  const hideFilterModal = () => {
+    setFilterModalVisible(false)
+  }
+
+  const showSortModal = () => {
+    setSortModalVisible(true)
+  }
+
+  const hideSortModal = () => {
+    setSortModalVisible(false)
   }
 
   return (
     <nav className={`header ${!isHeaderVisible ? 'hidden' : ''}`}>
       <Modal
-        id={crypto.randomUUID()}
+        id='filterModal'
         closeModal={() => {
-          setModalVisible(false)
+          setFilterModalVisible(false)
         }}
-        isOpen={modalVisible}
+        isOpen={filterModalVisible}
       >
-        <FilterForm bookFilters={filters} setBookFilters={setFilters} hideModal={hideModal} />
+        <FilterForm bookFilters={filters} setBookFilters={setFilters} hideModal={hideFilterModal} />
+      </Modal>
+      <Modal
+        id='sortModal'
+        closeModal={() => {
+          setSortModalVisible(false)
+        }}
+        isOpen={sortModalVisible}
+      >
+        <SortForm bookSort={sort} setBookSort={setSort} hideModal={hideSortModal} />
       </Modal>
       <div className='header-left'></div>
       <div className='header-center'>
         {jwt?.accessToken ? (
           <>
             <BookSearch handleSearch={handleSearch} />
-            <button title='Filter books' onClick={handleFilter} className='filter-button'>
+            <button title='Filter books' onClick={showFilterModal} className='filter-button'>
               <FilterIcon size='100%' />
             </button>
-            <button title='Sort books' className='sort-button'>
+            <button title='Sort books' onClick={showSortModal} className='sort-button'>
               <SortIcon size='100%' />
             </button>
           </>

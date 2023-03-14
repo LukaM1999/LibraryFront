@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, MouseEventHandler, useState } from 'react'
+import { ChangeEvent, FC, useState } from 'react'
 import './FilterForm.css'
 import Select from 'react-select'
 import { SiAddthis as AddFilterIcon } from 'react-icons/si'
@@ -78,6 +78,7 @@ const FilterForm: FC<FilterFormProps> = ({ bookFilters, setBookFilters, hideModa
             options={fieldOptions}
             onChange={handleFilterFieldChange}
             value={value}
+            placeholder='Select fields to filter by...'
           />
           <button
             type='button'
@@ -94,7 +95,7 @@ const FilterForm: FC<FilterFormProps> = ({ bookFilters, setBookFilters, hideModa
         <div className='filters-container'>
           {filters.map((filter) => (
             <div key={filter.id} className='filter'>
-              <label>{filter.Field}</label>
+              <label>{fieldOptions.find((opt) => opt.value === filter.Field)?.label}</label>
               <div className='filter-container'>
                 <input
                   type='text'

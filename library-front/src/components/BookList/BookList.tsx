@@ -4,7 +4,7 @@ import { useInView } from 'react-intersection-observer'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import './BookList.css'
 import BookCard from '../BookCard/BookCard'
-import { useFilters, useJwt, useSearch } from '../../App'
+import { useFilters, useJwt, useSearch, useSort } from '../../App'
 import { BiBookAdd as AddIcon } from 'react-icons/bi'
 
 interface BookListProps {}
@@ -42,6 +42,7 @@ const BookList: FC<BookListProps> = () => {
   const { ref, inView } = useInView({ rootMargin: '60%' })
   const { search } = useSearch()
   const { filters } = useFilters()
+  const { sort } = useSort()
   const { jwtToken } = useJwt()
 
   const role = jwtToken?.role
@@ -49,12 +50,11 @@ const BookList: FC<BookListProps> = () => {
   let { data, fetchNextPage } = useInfiniteQuery(
     ['books'],
     async ({ pageParam = 1 }) => {
-      if (search) {
-        searchByTitle[0].Value = search
-      }
+      searchByTitle[0].Value = search
       const { data } = await getBooksPaged({
         page: pageParam,
         where: [...searchByTitle, ...filters],
+        order: sort,
       })
       const bookPage: BookPage = {
         books: data.Items,
@@ -73,7 +73,7 @@ const BookList: FC<BookListProps> = () => {
     if (!data) return
     data.pages = []
     fetchNextPage({ pageParam: 1 })
-  }, [search, filters])
+  }, [search, filters, sort])
 
   useEffect(() => {
     if (inView) {

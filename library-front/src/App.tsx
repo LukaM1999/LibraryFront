@@ -29,12 +29,18 @@ interface ContextFilters {
   setFilters: React.Dispatch<React.SetStateAction<BookFilter[]>>
 }
 
+interface ContextSort {
+  sort: (string | undefined)[] | undefined
+  setSort: React.Dispatch<React.SetStateAction<string[]>>
+}
+
 const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 1000 * 60 * 5 } } })
 
 function App() {
   const [jwtToken, setJwtToken] = useState<Jwt | null>(null)
   const [search, setSearch] = useState<string>('')
   const [filters, setFilters] = useState<BookFilter[]>([])
+  const [sort, setSort] = useState<(string | undefined)[] | undefined>()
 
   useEffect(() => {
     const jwt: Jwt = JSON.parse(getItem('jwt') || '{}')
@@ -50,10 +56,14 @@ function App() {
         setSearch={setSearch}
         filters={filters}
         setFilters={setFilters}
+        sort={sort}
+        setSort={setSort}
       />
       <Navbar />
       <div className='app'>
-        <Outlet context={{ jwtToken, setJwtToken, search, setSearch, filters, setFilters }} />
+        <Outlet
+          context={{ jwtToken, setJwtToken, search, setSearch, filters, setFilters, sort, setSort }}
+        />
       </div>
       <Footer />
     </QueryClientProvider>
@@ -70,6 +80,10 @@ export function useSearch() {
 
 export function useFilters() {
   return useOutletContext<ContextFilters>()
+}
+
+export function useSort() {
+  return useOutletContext<ContextSort>()
 }
 
 export default App

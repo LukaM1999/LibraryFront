@@ -11,7 +11,7 @@ interface ModalProps {
   children: ReactNode
 }
 
-const Modal: FC<ModalProps> = ({ id, isOpen, closeModal, children }) => {
+export const Modal: FC<ModalProps> = ({ id, isOpen, closeModal, children }) => {
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {

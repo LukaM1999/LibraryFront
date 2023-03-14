@@ -1,0 +1,83 @@
+.filter-form {
+  color: black;
+  padding: 1em;
+}
+
+.select-container {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-form > label > .select-container {
+  margin-top: 0.25em;
+}
+
+.select-filter {
+  flex: 1;
+}
+
+.add-filter-btn,
+.remove-filter-btn,
+.apply-filters-btn,
+.clear-filters-btn {
+  border-radius: 0.5em;
+  width: 40px;
+  height: 40px;
+  background-color: #45b398;
+  border: 0;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.apply-filters-btn,
+.clear-filters-btn {
+  width: 7rem;
+  font-weight: bold;
+}
+
+.remove-filter-btn,
+.clear-filters-btn {
+  background-color: #972527;
+}
+
+.remove-filter-btn:hover,
+.clear-filters-btn:hover {
+  background-color: #aa2723;
+}
+
+.add-filter-btn:hover,
+.apply-filters-btn:hover {
+  background-color: #41c8aa;
+}
+
+.filters-container {
+  margin-top: 0.25em;
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}
+
+.filter {
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.filter-container > input {
+  flex: 0.8;
+}
+
+.filter-form-footer {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}

@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from 'react'
+import { FC, useEffect, useMemo } from 'react'
 import './BookSearch.css'
 import debounce from 'lodash.debounce'
 

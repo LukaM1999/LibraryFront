@@ -1,6 +1,6 @@
 import { FC } from 'react'
-import { AiOutlineEdit } from 'react-icons/ai'
-import { FiDelete } from 'react-icons/fi'
+import { AiOutlineEdit as EditIcon } from 'react-icons/ai'
+import { FiDelete as DeleteIcon } from 'react-icons/fi'
 import { useJwt } from '../../App'
 import { Book } from '../BookList/BookList'
 import './BookCard.css'
@@ -19,10 +19,10 @@ const BookCard: FC<BookCardProps> = ({ book }) => {
       {role && role !== 'User' && (
         <div className='book-card-actions'>
           <button title='Edit book' className='book-card-btn'>
-            <AiOutlineEdit size='100%' />
+            <EditIcon size='100%' />
           </button>
           <button title='Delete book' className='book-card-btn delete-book'>
-            <FiDelete size='100%' />
+            <DeleteIcon size='100%' />
           </button>
         </div>
       )}
@@ -35,11 +35,11 @@ const BookCard: FC<BookCardProps> = ({ book }) => {
       </div>
       <div className='book-card-body'>
         <div className='book-card-body-group'>
-          <h3>Title</h3>
-          <p>{book.Title}</p>
+          <h2>
+            <i>{book.Title}</i>
+          </h2>
         </div>
         <div className='book-card-body-group'>
-          <h3>Description</h3>
           <p>
             {book.Description?.length > 60
               ? `${book.Description.substring(0, 60)}...`

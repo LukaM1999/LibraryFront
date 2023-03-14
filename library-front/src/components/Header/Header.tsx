@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { clearJwt, Jwt } from '../../helpers/jwt-helper'
 import BookSearch from '../BookSearch/BookSearch'
@@ -11,6 +11,22 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({ jwt, setJwt, setSearch }) => {
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true)
+  const [prevScrollPos, setPrevScrollPos] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPos = window.pageYOffset
+
+      setIsHeaderVisible(prevScrollPos > currentScrollPos || currentScrollPos < 50)
+      setPrevScrollPos(currentScrollPos)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [prevScrollPos])
+
   const handleLogout = () => {
     clearAndNullifyJwt()
   }
@@ -25,7 +41,7 @@ const Header: FC<HeaderProps> = ({ jwt, setJwt, setSearch }) => {
   }
 
   return (
-    <nav className='header'>
+    <nav className={`header ${!isHeaderVisible ? 'hidden' : ''}`}>
       <div className='header-center'>
         {jwt?.accessToken ? <BookSearch handleSearch={handleSearch} /> : null}
       </div>

@@ -1,22 +1,19 @@
-import { FC, Fragment, useEffect, useState } from 'react'
+import { FC, useEffect } from 'react'
 import { getBooksPaged, WhereBookQuery } from '../../services/BookService'
 import { useInView } from 'react-intersection-observer'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import './BookList.css'
 import BookCard from '../BookCard/BookCard'
-import { useSearch } from '../../App'
-import { Jwt, JwtRole, roleKey } from '../../helpers/jwt-helper'
-import { getItem } from '../../services/StorageService'
+import { useJwt, useSearch } from '../../App'
 import { BiBookAdd } from 'react-icons/bi'
 
-interface BookListProps {
-  jwt: Jwt | null
-}
+interface BookListProps {}
 
 export interface Book {
   Id: number
   Title: string
   Description: string
+  Cover: string
   Isbn: string
   PublishDate: Date
   Authors: Author[]
@@ -41,11 +38,12 @@ const searchByTitle: WhereBookQuery[] = [
   },
 ]
 
-const BookList: FC<BookListProps> = ({ jwt }) => {
+const BookList: FC<BookListProps> = () => {
   const { ref, inView } = useInView({ rootMargin: '20%' })
   const { search } = useSearch()
+  const { jwtToken } = useJwt()
 
-  const role = JSON.parse(getItem('jwt') || '{}').role
+  const role = jwtToken?.role
 
   let { data, fetchNextPage } = useInfiniteQuery(
     ['books'],
@@ -89,7 +87,7 @@ const BookList: FC<BookListProps> = ({ jwt }) => {
         )}
       </div>
       {role && role !== 'User' && (
-        <button className='btn-add-book'>
+        <button title='New book' className='btn-add-book'>
           <BiBookAdd size='100%' />
         </button>
       )}

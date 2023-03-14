@@ -7,7 +7,7 @@ export const getBooksPaged = async (
   booksPagedRequest: BooksPagedRequest,
 ): Promise<AxiosResponse<Book[]>> => {
   const pageNumber = `pageNumber=${booksPagedRequest.page ?? 1}`
-  const pageLenght = `&pageLength=${booksPagedRequest.pageLenght ?? 3}`
+  const pageLenght = `&pageLength=${booksPagedRequest.pageLenght ?? 10}`
   const where =
     booksPagedRequest.where?.reduce((previous, current) => {
       return `${previous}&where=${JSON.stringify(current)}`

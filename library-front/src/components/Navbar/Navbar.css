@@ -31,7 +31,7 @@
     position: fixed;
     top: var(--hamburger-margin);
     left: var(--hamburger-margin);
-    z-index: 2;
+    z-index: 10000;
     cursor: pointer;
   }
 

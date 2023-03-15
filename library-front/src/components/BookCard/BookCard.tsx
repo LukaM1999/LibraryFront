@@ -68,7 +68,11 @@ const BookCard: FC<BookCardProps> = ({ book }) => {
         </div>
         <div className='book-card-body-group'>
           <h3>Publish date</h3>
-          <p>{new Intl.DateTimeFormat('sr-RS').format(new Date(book.PublishDate))}</p>
+          <p>
+            {book.PublishDate
+              ? new Intl.DateTimeFormat('sr-RS').format(new Date(book.PublishDate))
+              : 'Unknown'}
+          </p>
         </div>
         <div className='book-card-body-group'>
           <h3>Author(s)</h3>

@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { getBooksPaged, WhereBookQuery } from '../../services/BookService'
 import { useInView } from 'react-intersection-observer'
 import { useInfiniteQuery } from '@tanstack/react-query'
@@ -6,6 +6,8 @@ import './BookList.css'
 import BookCard from '../BookCard/BookCard'
 import { useFilters, useJwt, useSearch, useSort } from '../../App'
 import { BiBookAdd as AddIcon } from 'react-icons/bi'
+import { Modal } from '../Modal/Modal'
+import BookForm from '../BookForm/BookForm'
 
 interface BookListProps {}
 
@@ -13,13 +15,15 @@ export interface Book {
   Id: number
   Title: string
   Description: string
-  Cover: string
+  Cover?: string
   Isbn: string
   PublishDate: Date
   Authors: Author[]
+  Quantity?: number
 }
 
 export interface Author {
+  Id: number
   FirstName: string
   LastName: string
 }
@@ -44,8 +48,13 @@ const BookList: FC<BookListProps> = () => {
   const { filters } = useFilters()
   const { sort } = useSort()
   const { jwtToken } = useJwt()
+  const [bookModalVisible, setBookModalVisible] = useState(false)
 
   const role = jwtToken?.role
+
+  const showBookModal = () => {
+    setBookModalVisible(true)
+  }
 
   let { data, fetchNextPage } = useInfiniteQuery(
     ['books'],
@@ -82,13 +91,22 @@ const BookList: FC<BookListProps> = () => {
   }, [inView])
   return (
     <>
+      <Modal
+        id='bookModal'
+        closeModal={() => {
+          setBookModalVisible(false)
+        }}
+        isOpen={bookModalVisible}
+      >
+        <BookForm hideModal={() => setBookModalVisible(false)} />
+      </Modal>
       <div className='book-list'>
         {data?.pages?.map((page) =>
           page?.books?.map((book) => <BookCard key={book.Id} book={book} />),
         )}
       </div>
       {role && role !== 'User' && (
-        <button title='New book' className='btn-add-book'>
+        <button title='New book' onClick={showBookModal} className='btn-add-book'>
           <AddIcon size='100%' />
         </button>
       )}

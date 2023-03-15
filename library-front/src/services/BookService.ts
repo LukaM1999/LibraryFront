@@ -17,6 +17,14 @@ export const getBooksPaged = async (
   return axios.get<BooksPagedResponse>(`${url}/paged?${pageNumber}${pageLenght}${where}${order}`)
 }
 
+export const getBook = (id: number): Promise<AxiosResponse<Book>> => {
+  return axios.get<Book>(`${url}/${id}`)
+}
+
+export const createBook = (book: FormData): Promise<AxiosResponse<void>> => {
+  return axios.post<void>(url, book)
+}
+
 export interface WhereBookQuery {
   Field: string
   Value: string

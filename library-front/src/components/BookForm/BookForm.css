@@ -1,0 +1,57 @@
+.book-form {
+  color: black;
+  padding: 1em;
+  overflow-y: visible;
+}
+
+.book-form-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-direction: column;
+}
+
+.book-form-row > * {
+  width: 100%;
+  text-align: center;
+}
+
+.book-form-row + .book-form-row {
+  margin-top: 0.5em;
+}
+
+.book-form-column {
+  justify-content: center;
+  display: flex;
+  gap: 10px;
+}
+
+.create-author-btn,
+.create-book-btn,
+.add-author-btn {
+  border-radius: 0.5em;
+  width: 40px;
+  height: 40px;
+  background-color: #45b398;
+  border: 0;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.create-author-btn,
+.create-book-btn {
+  width: 7rem;
+  font-weight: bold;
+}
+
+.add-author-btn:hover,
+.create-author-btn:hover {
+  background-color: #41c8aa;
+}
+
+.book-cover {
+  cursor: pointer;
+  width: 50%;
+  height: 50%;
+  object-fit: cover;
+}

@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import { getItem } from './services/StorageService'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import configureAxios from './axios/config'
+import { BookFilter } from './components/FilterForm/FilterForm'
 
 configureAxios()
 
@@ -23,11 +24,23 @@ interface ContextSearch {
   setSearch: React.Dispatch<React.SetStateAction<string>>
 }
 
-const queryClient = new QueryClient()
+interface ContextFilters {
+  filters: BookFilter[]
+  setFilters: React.Dispatch<React.SetStateAction<BookFilter[]>>
+}
+
+interface ContextSort {
+  sort: string[]
+  setSort: React.Dispatch<React.SetStateAction<string[]>>
+}
+
+const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 1000 * 60 * 5 } } })
 
 function App() {
   const [jwtToken, setJwtToken] = useState<Jwt | null>(null)
   const [search, setSearch] = useState<string>('')
+  const [filters, setFilters] = useState<BookFilter[]>([])
+  const [sort, setSort] = useState<string[]>([])
 
   useEffect(() => {
     const jwt: Jwt = JSON.parse(getItem('jwt') || '{}')
@@ -37,10 +50,20 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ToastContainer />
-      <Header jwt={jwtToken} setJwt={setJwtToken} setSearch={setSearch} />
+      <Header
+        jwt={jwtToken}
+        setJwt={setJwtToken}
+        setSearch={setSearch}
+        filters={filters}
+        setFilters={setFilters}
+        sort={sort}
+        setSort={setSort}
+      />
       <Navbar />
       <div className='app'>
-        <Outlet context={{ jwtToken, setJwtToken, search, setSearch }} />
+        <Outlet
+          context={{ jwtToken, setJwtToken, search, setSearch, filters, setFilters, sort, setSort }}
+        />
       </div>
       <Footer />
     </QueryClientProvider>
@@ -53,6 +76,14 @@ export function useJwt() {
 
 export function useSearch() {
   return useOutletContext<ContextSearch>()
+}
+
+export function useFilters() {
+  return useOutletContext<ContextFilters>()
+}
+
+export function useSort() {
+  return useOutletContext<ContextSort>()
 }
 
 export default App

@@ -1,10 +1,10 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import './SortForm.css'
 import Select, { MultiValue } from 'react-select'
 
 interface SortFormProps {
-  bookSort: (string | undefined)[] | undefined
-  setBookSort: React.Dispatch<React.SetStateAction<(string | undefined)[] | undefined>>
+  bookSort: string[]
+  setBookSort: React.Dispatch<React.SetStateAction<string[]>>
   hideModal: () => void
 }
 
@@ -13,7 +13,7 @@ interface SortOption {
   value: string
 }
 
-const sortOptions: SortOption[] = [
+const sortOptions: MultiValue<SortOption> = [
   { label: 'Title Ascending', value: 'Title' },
   { label: 'Title Descending', value: 'Title DESC' },
   { label: 'Publish Date Ascending', value: 'PublishDate' },
@@ -23,21 +23,20 @@ const sortOptions: SortOption[] = [
 ]
 
 const SortForm: FC<SortFormProps> = ({ bookSort, setBookSort, hideModal }) => {
-  let selectedOptions = bookSort?.map((s) => {
-    const option = sortOptions.find((o) => o.value === s)
-    return option
-  })
+  const [selectedOptions, setSelectedOptions] = useState<MultiValue<SortOption>>([])
 
-  const [value, setValue] = useState<(string | undefined)[] | undefined>()
+  useEffect(() => {
+    const options = bookSort.map((s) => sortOptions.find((o) => o.value === s))
+    setSelectedOptions(options as MultiValue<SortOption>)
+  }, [bookSort])
 
   const handleApplySort = () => {
-    setBookSort(value)
+    setBookSort(selectedOptions.map((o) => o.value))
     hideModal()
   }
 
-  const handleValueChange = (selectedOptions: MultiValue<SortOption | undefined>) => {
-    const values = selectedOptions?.map((o) => o?.value)
-    setValue(values)
+  const handleValueChange = (selectedOptions: MultiValue<SortOption>) => {
+    setSelectedOptions(selectedOptions)
   }
 
   return (
@@ -48,11 +47,11 @@ const SortForm: FC<SortFormProps> = ({ bookSort, setBookSort, hideModal }) => {
           <Select
             className='select-sort'
             options={sortOptions}
-            defaultValue={selectedOptions}
+            value={selectedOptions}
             onChange={handleValueChange}
             isSearchable={true}
             isMulti
-            isClearable={true}
+            isClearable={false}
             placeholder='Select sort options...'
           />
         </div>

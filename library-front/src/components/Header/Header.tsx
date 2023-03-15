@@ -15,8 +15,8 @@ interface HeaderProps {
   setSearch: (search: string) => void
   filters: BookFilter[]
   setFilters: React.Dispatch<React.SetStateAction<BookFilter[]>>
-  sort: (string | undefined)[] | undefined
-  setSort: React.Dispatch<React.SetStateAction<(string | undefined)[] | undefined>>
+  sort: string[]
+  setSort: React.Dispatch<React.SetStateAction<string[]>>
 }
 
 const Header: FC<HeaderProps> = ({

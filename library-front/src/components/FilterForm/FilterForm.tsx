@@ -4,7 +4,7 @@ import Select from 'react-select'
 import { SiAddthis as AddFilterIcon } from 'react-icons/si'
 import { MdDeleteForever as RemoveFilterIcon } from 'react-icons/md'
 import { WhereBookQuery } from '../../services/BookService'
-import { SingleValue } from 'react-select/dist/declarations/src'
+import { MultiValue, SingleValue } from 'react-select/dist/declarations/src'
 import { Form } from 'react-router-dom'
 
 interface FilterFormProps {
@@ -22,7 +22,7 @@ interface FilterField {
   value: string
 }
 
-const fieldOptions: FilterField[] = [
+const fieldOptions: MultiValue<FilterField> = [
   { label: 'Author First Name', value: 'Authors.Firstname' },
   { label: 'Author Last Name', value: 'Authors.Lastname' },
 ]

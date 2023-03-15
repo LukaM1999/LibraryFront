@@ -30,7 +30,7 @@ interface ContextFilters {
 }
 
 interface ContextSort {
-  sort: (string | undefined)[] | undefined
+  sort: string[]
   setSort: React.Dispatch<React.SetStateAction<string[]>>
 }
 
@@ -40,7 +40,7 @@ function App() {
   const [jwtToken, setJwtToken] = useState<Jwt | null>(null)
   const [search, setSearch] = useState<string>('')
   const [filters, setFilters] = useState<BookFilter[]>([])
-  const [sort, setSort] = useState<(string | undefined)[] | undefined>()
+  const [sort, setSort] = useState<string[]>([])
 
   useEffect(() => {
     const jwt: Jwt = JSON.parse(getItem('jwt') || '{}')

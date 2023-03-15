@@ -29,6 +29,7 @@ export const Modal: FC<ModalProps> = ({ id, isOpen, closeModal, children }) => {
 
     if (isOpen) {
       addModal(id, closeModal)
+      document.body.style.overflowY = 'hidden'
       document.addEventListener('keydown', handleEscapeKey)
       document.addEventListener('mousedown', handleClickOutside)
     }
@@ -36,6 +37,7 @@ export const Modal: FC<ModalProps> = ({ id, isOpen, closeModal, children }) => {
     return () => {
       document.removeEventListener('keydown', handleEscapeKey)
       document.removeEventListener('mousedown', handleClickOutside)
+      document.body.style.overflowY = 'visible'
     }
   }, [isOpen, closeModal])
 
@@ -61,9 +63,11 @@ export const Modal: FC<ModalProps> = ({ id, isOpen, closeModal, children }) => {
     <div className={`modal ${isOpen ? 'show' : 'hide'}`}>
       <div className='modal-overlay' onClick={closeModal} />
       <div className='modal-content' ref={modalRef}>
-        <button className='close-button' onClick={closeModal}>
-          X
-        </button>
+        <div className='modal-header'>
+          <button className='close-button' onClick={closeModal}>
+            X
+          </button>
+        </div>
         {children}
       </div>
     </div>,

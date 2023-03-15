@@ -1,6 +1,6 @@
 .book-form {
   color: black;
-  padding: 1em;
+  padding: 2em;
   overflow-y: visible;
 }
 
@@ -28,7 +28,8 @@
 
 .create-author-btn,
 .create-book-btn,
-.add-author-btn {
+.add-author-btn,
+.remove-image-btn {
   border-radius: 0.5em;
   width: 40px;
   height: 40px;
@@ -49,9 +50,25 @@
   background-color: #41c8aa;
 }
 
+.remove-image-btn {
+  position: absolute;
+  z-index: 1;
+  top: -0.5em;
+  background-color: #972527;
+}
+
+.remove-image-btn:hover {
+  background-color: #aa2723;
+}
+
 .book-cover {
   cursor: pointer;
-  width: 50%;
-  height: 50%;
+  width: 40%;
+  height: 40%;
   object-fit: cover;
+}
+
+.book-cover-container {
+  position: relative;
+  z-index: 1;
 }

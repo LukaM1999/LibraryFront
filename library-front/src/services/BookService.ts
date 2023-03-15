@@ -17,12 +17,16 @@ export const getBooksPaged = async (
   return axios.get<BooksPagedResponse>(`${url}/paged?${pageNumber}${pageLenght}${where}${order}`)
 }
 
-export const getBook = (id: number): Promise<AxiosResponse<Book>> => {
-  return axios.get<Book>(`${url}/${id}`)
+export const getBook = (id: number): Promise<AxiosResponse<GetBookResponse>> => {
+  return axios.get<GetBookResponse>(`${url}/${id}`)
 }
 
 export const createBook = (book: FormData): Promise<AxiosResponse<void>> => {
   return axios.post<void>(url, book)
+}
+
+export const updateBook = (book: FormData): Promise<AxiosResponse<void>> => {
+  return axios.put<void>(`${url}`, book)
 }
 
 export interface WhereBookQuery {
@@ -41,4 +45,21 @@ export interface BooksPagedRequest {
 export interface BooksPagedResponse {
   Items: Book[]
   TotalCount: number
+}
+
+export interface GetBookResponse {
+  Id: number
+  Title: string
+  ISBN: string
+  Authors: GetBookAuthorsResponse[]
+  Cover: string
+  Description: string
+  PublishDate: Date
+  Quantity: number
+}
+
+export interface GetBookAuthorsResponse {
+  Id: number
+  Firstname: string
+  Lastname: string
 }

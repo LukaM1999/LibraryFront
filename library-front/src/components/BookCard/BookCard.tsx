@@ -1,12 +1,13 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { AiOutlineEdit as EditIcon } from 'react-icons/ai'
 import { MdDeleteForever as DeleteIcon } from 'react-icons/md'
 import { toast } from 'react-toastify'
 import { useJwt } from '../../App'
-import { getBook } from '../../services/BookService'
+import { deleteBook, getBook } from '../../services/BookService'
 import BookForm from '../BookForm/BookForm'
-import { Book } from '../BookList/BookList'
-import DeleteBookForm from '../DeleteBookForm/DeleteBookForm'
+import { Book, BookPage } from '../BookList/BookList'
+import ConfirmForm from '../ConfirmForm/ConfirmForm'
 import { Modal } from '../Modal/Modal'
 import './BookCard.css'
 
@@ -16,18 +17,10 @@ interface BookCardProps {
 
 const BookCard: FC<BookCardProps> = ({ book }) => {
   const { jwtToken } = useJwt()
-  const [bookModalVisible, setBookModalVisible] = useState(false)
-  const [deleteBookModalVisible, setDeleteBookModalVisible] = useState(false)
+  const [visibleModal, setVisibleModal] = useState<string | undefined>()
+  const queryClient = useQueryClient()
 
   const role = jwtToken?.role
-
-  const showBookModal = () => {
-    setBookModalVisible(true)
-  }
-
-  const showDeleteBookModal = () => {
-    setDeleteBookModalVisible(true)
-  }
 
   const handleBookDelete = async () => {
     const { data } = await getBook(book.Id).catch((err) => {
@@ -39,7 +32,25 @@ const BookCard: FC<BookCardProps> = ({ book }) => {
       toast.warning("Book is currently being rented and can't be deleted")
       return
     }
-    showDeleteBookModal()
+    setVisibleModal('delete')
+  }
+
+  const handleDeleteDecision = async (isConfirmed: boolean) => {
+    if (!isConfirmed) {
+      setVisibleModal(undefined)
+      return
+    }
+    await deleteBook(book.Id).catch((err) => {
+      toast.error("Couldn't delete book")
+      throw new Error(err)
+    })
+    queryClient.invalidateQueries({
+      queryKey: ['books'],
+      refetchPage: (lastPage: BookPage) =>
+        lastPage.books.some((deletedBook) => book.Id === deletedBook.Id),
+    })
+    setVisibleModal(undefined)
+    toast.success('Book deleted successfully')
   }
 
   return (
@@ -47,24 +58,28 @@ const BookCard: FC<BookCardProps> = ({ book }) => {
       <Modal
         id='bookModal'
         closeModal={() => {
-          setBookModalVisible(false)
+          setVisibleModal(undefined)
         }}
-        isOpen={bookModalVisible}
+        isOpen={!!visibleModal}
       >
-        <BookForm hideModal={() => setBookModalVisible(false)} bookId={book.Id} />
-      </Modal>
-      <Modal
-        id='deleteBookModal'
-        closeModal={() => {
-          setDeleteBookModalVisible(false)
-        }}
-        isOpen={deleteBookModalVisible}
-      >
-        <DeleteBookForm hideModal={() => setDeleteBookModalVisible(false)} book={book} />
+        {visibleModal === 'edit' && (
+          <BookForm hideModal={() => setVisibleModal(undefined)} bookId={book.Id} />
+        )}
+        {visibleModal === 'delete' && (
+          <ConfirmForm
+            decision={handleDeleteDecision}
+            text={`Are you sure you want to delete the book "${book.Title}?"`}
+            confirmText='Delete'
+          />
+        )}
       </Modal>
       {role && role !== 'User' && (
         <div className='book-card-actions'>
-          <button onClick={showBookModal} title='Edit book' className='book-card-btn'>
+          <button
+            onClick={() => setVisibleModal('edit')}
+            title='Edit book'
+            className='book-card-btn'
+          >
             <EditIcon size='100%' />
           </button>
           <button

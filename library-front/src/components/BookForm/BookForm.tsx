@@ -74,11 +74,17 @@ const BookForm: FC<BookFormProps> = ({ bookId, hideModal }) => {
       LastName: authorLastName,
     }
 
-    await createAuthor(author)
+    await createAuthor(author).catch((error) => {
+      toast.error('Error creating author')
+      throw new Error(error)
+    })
 
     toast.success('Author created successfully!')
 
-    const { data } = await getAllAuthors()
+    const { data } = await getAllAuthors().catch((error) => {
+      toast.error('Error retrieving authors')
+      throw new Error(error)
+    })
 
     setAuthorOptions(
       data.map((author) => ({
@@ -112,7 +118,10 @@ const BookForm: FC<BookFormProps> = ({ bookId, hideModal }) => {
     authors.forEach((author) => formData.append('AuthorIds', author.value.toString()))
     formData.append('Cover', coverImage ? convertBase64ToBlob(coverImage) : '')
 
-    await updateBook(formData)
+    await updateBook(formData).catch((error) => {
+      toast.error('Error updating book')
+      throw new Error(error)
+    })
 
     queryClient.invalidateQueries({
       queryKey: ['books'],
@@ -137,7 +146,10 @@ const BookForm: FC<BookFormProps> = ({ bookId, hideModal }) => {
       formData.append('Cover', cover)
     }
 
-    await createBook(formData)
+    await createBook(formData).catch((error) => {
+      toast.error('Error creating book')
+      throw new Error(error)
+    })
 
     queryClient.invalidateQueries({
       queryKey: ['books'],

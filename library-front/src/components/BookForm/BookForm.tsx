@@ -1,14 +1,14 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { FC, useEffect, useRef, useState } from 'react'
+import { HiUserAdd as AddAuthorIcon } from 'react-icons/hi'
+import { MdHideImage as RemoveImageIcon } from 'react-icons/md'
 import Select from 'react-select'
-import { getAllAuthors, createAuthor } from '../../services/AuthorService'
+import { toast } from 'react-toastify'
+import convertBase64ToBlob from '../../helpers/image-helper'
+import { createAuthor, getAllAuthors } from '../../services/AuthorService'
 import { createBook, getBook, updateBook } from '../../services/BookService'
 import { Author, BookPage } from '../BookList/BookList'
 import './BookForm.css'
-import { HiUserAdd as AddAuthorIcon } from 'react-icons/hi'
-import { MdHideImage as RemoveImageIcon } from 'react-icons/md'
-import { toast } from 'react-toastify'
-import { useQueryClient } from '@tanstack/react-query'
-import convertBase64ToBlob from '../../helpers/image-helper'
 
 interface BookFormProps {
   bookId?: number
@@ -236,7 +236,6 @@ const BookForm: FC<BookFormProps> = ({ bookId, hideModal }) => {
         <input
           type='date'
           value={publishDate ? new Intl.DateTimeFormat('en-CA').format(new Date(publishDate)) : ''}
-          required
           onChange={(e) => setPublishDate(new Date(e.target.value))}
         />
       </div>

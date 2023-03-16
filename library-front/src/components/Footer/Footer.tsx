@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { AiFillHome as HomeIcon } from 'react-icons/ai'
 import { FaUserAlt as ProfileIcon } from 'react-icons/fa'
 import NavButton from '../NavButton/NavButton'

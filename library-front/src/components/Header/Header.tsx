@@ -1,13 +1,13 @@
 import { FC, useEffect, useState } from 'react'
+import { BiSort as SortIcon } from 'react-icons/bi'
+import { TbFilter as FilterIcon } from 'react-icons/tb'
 import { Link } from 'react-router-dom'
 import { clearJwt, Jwt } from '../../helpers/jwt-helper'
 import BookSearch from '../BookSearch/BookSearch'
-import { TbFilter as FilterIcon } from 'react-icons/tb'
-import { BiSort as SortIcon } from 'react-icons/bi'
-import './Header.css'
 import FilterForm, { BookFilter } from '../FilterForm/FilterForm'
 import { Modal } from '../Modal/Modal'
 import SortForm from '../SortForm/SortForm'
+import './Header.css'
 
 interface HeaderProps {
   jwt: Jwt | null

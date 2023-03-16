@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
-import './SortForm.css'
 import Select, { MultiValue } from 'react-select'
+import './SortForm.css'
 
 interface SortFormProps {
   bookSort: string[]

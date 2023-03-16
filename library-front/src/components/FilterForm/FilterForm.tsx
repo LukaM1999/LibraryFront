@@ -1,11 +1,11 @@
 import { ChangeEvent, FC, useState } from 'react'
-import './FilterForm.css'
-import Select from 'react-select'
-import { SiAddthis as AddFilterIcon } from 'react-icons/si'
 import { MdDeleteForever as RemoveFilterIcon } from 'react-icons/md'
-import { WhereBookQuery } from '../../services/BookService'
-import { MultiValue, SingleValue } from 'react-select/dist/declarations/src'
+import { SiAddthis as AddFilterIcon } from 'react-icons/si'
 import { Form } from 'react-router-dom'
+import Select from 'react-select'
+import { MultiValue, SingleValue } from 'react-select/dist/declarations/src'
+import { WhereBookQuery } from '../../services/BookService'
+import './FilterForm.css'
 
 interface FilterFormProps {
   bookFilters: BookFilter[]

@@ -1,13 +1,13 @@
-import { FC, useEffect, useState } from 'react'
-import { getBooksPaged, WhereBookQuery } from '../../services/BookService'
-import { useInView } from 'react-intersection-observer'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import './BookList.css'
-import BookCard from '../BookCard/BookCard'
-import { useFilters, useJwt, useSearch, useSort } from '../../App'
+import { FC, useEffect, useState } from 'react'
 import { BiBookAdd as AddIcon } from 'react-icons/bi'
-import { Modal } from '../Modal/Modal'
+import { useInView } from 'react-intersection-observer'
+import { useFilters, useJwt, useSearch, useSort } from '../../App'
+import { getBooksPaged, WhereBookQuery } from '../../services/BookService'
+import BookCard from '../BookCard/BookCard'
 import BookForm from '../BookForm/BookForm'
+import { Modal } from '../Modal/Modal'
+import './BookList.css'
 
 interface BookListProps {}
 

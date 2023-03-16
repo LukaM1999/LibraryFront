@@ -7,7 +7,7 @@ export const getBooksPaged = async (
   booksPagedRequest: BooksPagedRequest,
 ): Promise<AxiosResponse<BooksPagedResponse>> => {
   const pageNumber = `pageNumber=${booksPagedRequest.page ?? 1}`
-  const pageLenght = `&pageLength=${booksPagedRequest.pageLenght ?? 10}`
+  const pageLenght = `&pageLength=${booksPagedRequest.pageLenght ?? 12}`
   const where =
     booksPagedRequest.where?.reduce((previous, current) => {
       return `${previous}&where=${JSON.stringify(current)}`
@@ -26,7 +26,11 @@ export const createBook = (book: FormData): Promise<AxiosResponse<void>> => {
 }
 
 export const updateBook = (book: FormData): Promise<AxiosResponse<void>> => {
-  return axios.put<void>(`${url}`, book)
+  return axios.put<void>(url, book)
+}
+
+export const deleteBook = (id: number): Promise<AxiosResponse<void>> => {
+  return axios.delete<void>(`${url}/${id}`)
 }
 
 export interface WhereBookQuery {
@@ -56,6 +60,7 @@ export interface GetBookResponse {
   Description: string
   PublishDate: Date
   Quantity: number
+  Available: number
 }
 
 export interface GetBookAuthorsResponse {

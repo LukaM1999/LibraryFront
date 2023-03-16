@@ -101,21 +101,26 @@ const BookForm: FC<BookFormProps> = ({ bookId, hideModal }) => {
   const handleBookFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (bookId) {
-      await updateSelectedBook()
+      await updateSelectedBook(bookId)
       return
     }
     await createNewBook()
   }
 
-  const updateSelectedBook = async () => {
+  const createBookFormData = () => {
     const formData = new FormData()
-    formData.append('Id', bookId?.toString() || '')
     formData.append('Title', title)
     formData.append('Description', description)
     formData.append('Isbn', isbn)
-    formData.append('PublishDate', publishDate ? new Date(publishDate).toUTCString() : '')
     formData.append('Quantity', quantity?.toString() || '1')
     authors.forEach((author) => formData.append('AuthorIds', author.value.toString()))
+    return formData
+  }
+
+  const updateSelectedBook = async (bookId: number) => {
+    const formData = createBookFormData()
+    formData.append('Id', bookId.toString())
+    formData.append('PublishDate', publishDate ? new Date(publishDate).toUTCString() : '')
     formData.append('Cover', coverImage ? convertBase64ToBlob(coverImage) : '')
 
     await updateBook(formData).catch((error) => {
@@ -133,15 +138,10 @@ const BookForm: FC<BookFormProps> = ({ bookId, hideModal }) => {
   }
 
   const createNewBook = async () => {
-    const formData = new FormData()
-    formData.append('Title', title)
-    formData.append('Description', description)
-    formData.append('Isbn', isbn)
+    const formData = createBookFormData()
     if (publishDate) {
       formData.append('PublishDate', publishDate.toISOString())
     }
-    formData.append('Quantity', quantity?.toString() || '1')
-    authors.forEach((author) => formData.append('AuthorIds', author.value.toString()))
     if (cover) {
       formData.append('Cover', cover)
     }
@@ -153,7 +153,7 @@ const BookForm: FC<BookFormProps> = ({ bookId, hideModal }) => {
 
     queryClient.invalidateQueries({
       queryKey: ['books'],
-      refetchPage: (lastPage: BookPage) => !!!lastPage.nextPage,
+      refetchPage: (lastPage: BookPage) => !lastPage.nextPage,
     })
 
     hideModal()

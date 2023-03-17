@@ -12,7 +12,7 @@ import './BookForm.css'
 
 interface BookFormProps {
   bookId?: number
-  hideModal: () => void
+  submit: () => void
 }
 
 interface AuthorOption {
@@ -20,7 +20,7 @@ interface AuthorOption {
   value: number
 }
 
-const BookForm: FC<BookFormProps> = ({ bookId, hideModal }) => {
+const BookForm: FC<BookFormProps> = ({ bookId, submit }) => {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [authors, setAuthors] = useState<AuthorOption[]>([])
@@ -29,7 +29,7 @@ const BookForm: FC<BookFormProps> = ({ bookId, hideModal }) => {
   const [quantity, setQuantity] = useState<number | undefined>(1)
   const [cover, setCover] = useState<File | null>(null)
   const [coverImage, setCoverImage] = useState<string | undefined>('')
-  const [publishDate, setPublishDate] = useState<Date | null>(null)
+  const [publishDate, setPublishDate] = useState<string>('')
   const [authorFormVisible, setAuthorFormVisible] = useState(false)
   const [authorFirstName, setAuthorFirstName] = useState('')
   const [authorLastName, setAuthorLastName] = useState('')
@@ -50,7 +50,7 @@ const BookForm: FC<BookFormProps> = ({ bookId, hideModal }) => {
         )
         setIsbn(data.ISBN)
         setQuantity(data.Quantity)
-        setPublishDate(data.PublishDate)
+        setPublishDate(data.PublishDate?.toString())
         if (data.Cover) {
           setCoverImage(`data:image/png;base64,${data.Cover}`)
         }
@@ -120,7 +120,10 @@ const BookForm: FC<BookFormProps> = ({ bookId, hideModal }) => {
   const updateSelectedBook = async (bookId: number) => {
     const formData = createBookFormData()
     formData.append('Id', bookId.toString())
-    formData.append('PublishDate', publishDate ? new Date(publishDate).toUTCString() : '')
+    formData.append(
+      'PublishDate',
+      publishDate ? new Intl.DateTimeFormat('en-US').format(new Date(publishDate)) : '',
+    )
     formData.append('Cover', coverImage ? convertBase64ToBlob(coverImage) : '')
 
     await updateBook(formData).catch((error) => {
@@ -133,14 +136,14 @@ const BookForm: FC<BookFormProps> = ({ bookId, hideModal }) => {
       refetchPage: (lastPage: BookPage) => lastPage.books.some((book) => book.Id === bookId),
     })
 
-    hideModal()
+    submit()
     toast.success('Book updated successfully!')
   }
 
   const createNewBook = async () => {
     const formData = createBookFormData()
     if (publishDate) {
-      formData.append('PublishDate', publishDate.toISOString())
+      formData.append('PublishDate', publishDate)
     }
     if (cover) {
       formData.append('Cover', cover)
@@ -156,7 +159,7 @@ const BookForm: FC<BookFormProps> = ({ bookId, hideModal }) => {
       refetchPage: (lastPage: BookPage) => !lastPage.nextPage,
     })
 
-    hideModal()
+    submit()
     toast.success('Book created successfully!')
   }
 
@@ -236,7 +239,7 @@ const BookForm: FC<BookFormProps> = ({ bookId, hideModal }) => {
         <input
           type='date'
           value={publishDate ? new Intl.DateTimeFormat('en-CA').format(new Date(publishDate)) : ''}
-          onChange={(e) => setPublishDate(new Date(e.target.value))}
+          onChange={(e) => setPublishDate(e.target.value)}
         />
       </div>
       <div className='book-form-row'>

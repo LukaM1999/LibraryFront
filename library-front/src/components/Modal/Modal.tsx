@@ -9,9 +9,10 @@ interface ModalProps {
   isOpen: boolean
   closeModal: () => void
   children: ReactNode
+  title?: string
 }
 
-export const Modal: FC<ModalProps> = ({ id, isOpen, closeModal, children }) => {
+export const Modal: FC<ModalProps> = ({ id, isOpen, closeModal, children, title }) => {
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -64,6 +65,7 @@ export const Modal: FC<ModalProps> = ({ id, isOpen, closeModal, children }) => {
       <div className='modal-overlay' onClick={closeModal} />
       <div className='modal-content' ref={modalRef}>
         <div className='modal-header'>
+          <h3>{title}</h3>
           <button className='close-button' onClick={closeModal}>
             X
           </button>

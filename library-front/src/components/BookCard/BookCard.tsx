@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import { useJwt } from '../../App'
 import { getBook } from '../../services/BookService'
 import BookForm from '../BookForm/BookForm'
+import BookFormWrapper from '../BookFormWrapper/BookFormWrapper'
 import { Book } from '../BookList/BookList'
 import { Modal } from '../Modal/Modal'
 import './BookCard.css'
@@ -39,16 +40,7 @@ const BookCard: FC<BookCardProps> = ({ book, handleDelete }) => {
 
   return (
     <div className='book-card'>
-      <Modal
-        id='bookModal'
-        closeModal={() => {
-          setModalVisible(false)
-        }}
-        isOpen={modalVisible}
-        title='Edit book'
-      >
-        <BookForm submit={handleBookFormSubmit} bookId={book.Id} />
-      </Modal>
+      <BookFormWrapper book={book} isOpen={modalVisible} setIsOpen={setModalVisible} />
       {role && role !== 'User' && (
         <div className='book-card-actions'>
           <button onClick={() => setModalVisible(true)} title='Edit book' className='book-card-btn'>

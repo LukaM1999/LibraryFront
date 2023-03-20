@@ -6,9 +6,8 @@ import { toast } from 'react-toastify'
 import { useFilters, useJwt, useSearch, useSort } from '../../App'
 import { deleteBook, getBooksPaged, WhereBookQuery } from '../../services/BookService'
 import BookCard from '../BookCard/BookCard'
-import BookForm from '../BookForm/BookForm'
+import BookFormWrapper from '../BookFormWrapper/BookFormWrapper'
 import Dialog from '../Dialog/Dialog'
-import { Modal } from '../Modal/Modal'
 import './BookList.css'
 
 interface BookListProps {}
@@ -117,16 +116,11 @@ const BookList: FC<BookListProps> = () => {
 
   return (
     <>
-      <Modal
-        id='bookModal'
-        closeModal={() => {
-          setBookModalVisible(false)
-        }}
+      <BookFormWrapper
+        closeModal={() => setBookModalVisible(false)}
         isOpen={bookModalVisible}
-        title='Create book'
-      >
-        <BookForm submit={() => setBookModalVisible(false)} />
-      </Modal>
+        setIsOpen={setBookModalVisible}
+      />
       <Dialog
         dialogRef={dialog}
         confirm={handleConfirmDelete}

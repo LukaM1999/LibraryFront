@@ -1,8 +1,10 @@
 import { FC, useState } from 'react'
 import { AiOutlineEdit as EditIcon } from 'react-icons/ai'
 import { MdDeleteForever as DeleteIcon } from 'react-icons/md'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useJwt } from '../../App'
+import bookCoverPlaceholder from '../../assets/book-cover-placeholder.png'
 import { getBook } from '../../services/BookService'
 import BookForm from '../BookForm/BookForm'
 import { Book } from '../BookList/BookList'
@@ -17,6 +19,7 @@ interface BookCardProps {
 const BookCard: FC<BookCardProps> = ({ book, handleDelete }) => {
   const { jwtToken } = useJwt()
   const [modalVisible, setModalVisible] = useState(false)
+  const navigate = useNavigate()
 
   const role = jwtToken?.role
 
@@ -63,11 +66,11 @@ const BookCard: FC<BookCardProps> = ({ book, handleDelete }) => {
           </button>
         </div>
       )}
-      <div className='book-card-header'>
+      <div onClick={() => navigate(`/book-details/${book.Id}`)} className='book-card-header'>
         <img
           title={book.Title}
           alt={book.Title}
-          src={book.Cover ? `data:image/png;base64,${book.Cover}` : './book-cover-placeholder.png'}
+          src={book.Cover ? `data:image/png;base64,${book.Cover}` : bookCoverPlaceholder}
         ></img>
       </div>
       <div className='book-card-body'>

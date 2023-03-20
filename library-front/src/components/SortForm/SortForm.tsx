@@ -53,6 +53,12 @@ const SortForm: FC<SortFormProps> = ({ bookSort, setBookSort, hideModal }) => {
             isMulti
             isClearable={false}
             placeholder='Select sort options...'
+            styles={{
+              menu: (baseStyles) => ({
+                ...baseStyles,
+                position: 'sticky',
+              }),
+            }}
           />
         </div>
       </label>

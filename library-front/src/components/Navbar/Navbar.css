@@ -83,7 +83,7 @@
 
   .sidebar {
     transition: translate var(--animation-timing);
-    translate: -100%;
+    translate: -120%;
     padding-top: calc(var(--hamburger-height) + var(--hamburger-margin) + 1rem);
     background-color: var(--foreground);
     color: var(--background);
@@ -93,6 +93,8 @@
     overflow-y: scroll;
     top: 0;
     bottom: 0;
+    z-index: 11;
+    box-shadow: 3px 0px 5px 5px rgba(0, 0, 0, 0.3);
     -ms-overflow-style: none;
     scrollbar-width: none;
   }

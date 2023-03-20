@@ -4,6 +4,7 @@ import { HiUserAdd as AddAuthorIcon } from 'react-icons/hi'
 import { MdHideImage as RemoveImageIcon } from 'react-icons/md'
 import Select from 'react-select'
 import { toast } from 'react-toastify'
+import bookCoverPlaceholder from '../../assets/book-cover-placeholder.png'
 import convertBase64ToBlob from '../../helpers/image-helper'
 import { createAuthor, getAllAuthors } from '../../services/AuthorService'
 import { createBook, getBook, updateBook } from '../../services/BookService'
@@ -175,7 +176,18 @@ const BookForm: FC<BookFormProps> = ({ bookId, submit }) => {
     if (!currentTarget.files) return
     const files = currentTarget.files
     const reader = new FileReader()
-    if (!files) return
+    if (!files || files.length === 0) return
+
+    if (!files[0]?.type.match(/^image\//)) {
+      toast.warn('Please select an image file')
+      return
+    }
+
+    if (files[0]?.size > 5 * 1024 * 1024) {
+      toast.warn('Selected image must be less than 5MB in size')
+      return
+    }
+
     reader.readAsDataURL(files[0])
     setCover(files[0])
     reader.onloadend = function () {
@@ -198,7 +210,7 @@ const BookForm: FC<BookFormProps> = ({ bookId, submit }) => {
           <img
             onClick={handleCoverClick}
             className='book-cover'
-            src={coverImage ? coverImage : './book-cover-placeholder.png'}
+            src={coverImage ? coverImage : bookCoverPlaceholder}
             alt='Book Cover'
             title='Click to change cover'
           />
@@ -217,6 +229,7 @@ const BookForm: FC<BookFormProps> = ({ bookId, submit }) => {
           type='file'
           id='file'
           name='file'
+          accept='image/png, image/jpeg, image/jpg, image/gif, image/bmp'
           ref={hiddenFileInput}
           onChange={handleFileChange}
           style={{ display: 'none' }}
@@ -264,6 +277,12 @@ const BookForm: FC<BookFormProps> = ({ bookId, submit }) => {
             placeholder='Select authors...'
             onChange={(selectedOptions) => {
               setAuthors([...selectedOptions])
+            }}
+            styles={{
+              menu: (baseStyles) => ({
+                ...baseStyles,
+                position: 'sticky',
+              }),
             }}
           />
           <button

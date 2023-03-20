@@ -14,7 +14,7 @@
 }
 
 .header.hidden {
-  transform: translateY(-100%);
+  transform: translateY(-120%);
 }
 
 .header-left {

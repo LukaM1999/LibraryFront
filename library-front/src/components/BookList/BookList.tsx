@@ -62,7 +62,15 @@ const BookList: FC<BookListProps> = () => {
   }
 
   let { data, fetchNextPage } = useInfiniteQuery(
-    ['books'],
+    [
+      'books',
+      search,
+      filters.map((filter) => {
+        let { id, ...withoutId } = filter
+        return withoutId
+      }),
+      sort,
+    ],
     async ({ pageParam = 1 }) => {
       searchByTitle[0].Value = search
       const { data } = await getBooksPaged({
@@ -82,12 +90,6 @@ const BookList: FC<BookListProps> = () => {
       getNextPageParam: (lastPage) => lastPage?.nextPage,
     },
   )
-
-  useEffect(() => {
-    if (!data) return
-    data.pages = []
-    fetchNextPage({ pageParam: 1 })
-  }, [search, filters, sort])
 
   useEffect(() => {
     if (inView) {

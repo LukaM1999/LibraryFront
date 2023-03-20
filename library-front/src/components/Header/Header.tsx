@@ -83,6 +83,7 @@ const Header: FC<HeaderProps> = ({
           setFilterModalVisible(false)
         }}
         isOpen={filterModalVisible}
+        title='Filter books'
       >
         <FilterForm bookFilters={filters} setBookFilters={setFilters} hideModal={hideFilterModal} />
       </Modal>
@@ -92,6 +93,7 @@ const Header: FC<HeaderProps> = ({
           setSortModalVisible(false)
         }}
         isOpen={sortModalVisible}
+        title='Sort books'
       >
         <SortForm bookSort={sort} setBookSort={setSort} hideModal={hideSortModal} />
       </Modal>

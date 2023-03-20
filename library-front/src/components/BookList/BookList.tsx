@@ -20,7 +20,8 @@ export interface Book {
   Isbn: string
   PublishDate: Date
   Authors: Author[]
-  Quantity?: number
+  Quantity: number
+  Available: number
 }
 
 export interface Author {
@@ -51,7 +52,7 @@ const BookList: FC<BookListProps> = () => {
   const { jwtToken } = useJwt()
   const [bookModalVisible, setBookModalVisible] = useState(false)
   const dialog = useRef<HTMLDialogElement>(null)
-  const [bookForDelete, setBookForDelete] = useState<Book | null>(null)
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null)
   const queryClient = useQueryClient()
 
   const role = jwtToken?.role
@@ -94,44 +95,59 @@ const BookList: FC<BookListProps> = () => {
     }
   }, [inView])
 
+  const handleCloseModal = () => {
+    setSelectedBook(null)
+    setBookModalVisible(false)
+  }
+
   const handleDelete = (selectedBook: Book) => {
-    setBookForDelete(selectedBook)
+    setSelectedBook(selectedBook)
     dialog.current?.showModal()
   }
 
   const handleConfirmDelete = async () => {
-    if (!bookForDelete) return
-    await deleteBook(bookForDelete.Id).catch((err) => {
+    if (!selectedBook) return
+    await deleteBook(selectedBook.Id).catch((err) => {
       toast.error("Couldn't delete book")
       throw new Error(err)
     })
     queryClient.invalidateQueries({
       queryKey: ['books'],
       refetchPage: (lastPage: BookPage) =>
-        lastPage.books.some((deletedBook) => bookForDelete.Id === deletedBook.Id),
+        lastPage.books.some((deletedBook) => selectedBook.Id === deletedBook.Id),
     })
     toast.success('Book deleted successfully')
-    setBookForDelete(null)
+    setSelectedBook(null)
+  }
+
+  const handleEdit = (selectedBook: Book) => {
+    setSelectedBook(selectedBook)
+    setBookModalVisible(true)
   }
 
   return (
     <>
       <BookFormWrapper
-        closeModal={() => setBookModalVisible(false)}
+        closeModal={handleCloseModal}
         isOpen={bookModalVisible}
-        setIsOpen={setBookModalVisible}
+        book={selectedBook}
       />
       <Dialog
         dialogRef={dialog}
         confirm={handleConfirmDelete}
-        title={`Are you sure you want to delete the book "${bookForDelete?.Title}?"`}
+        title={`Are you sure you want to delete the book "${selectedBook?.Title}?"`}
         confirmText='Delete'
       />
 
       <div className='book-list'>
         {data?.pages?.map((page) =>
           page?.books?.map((book) => (
-            <BookCard handleDelete={handleDelete} key={book.Id} book={book} />
+            <BookCard
+              handleDelete={handleDelete}
+              handleEdit={handleEdit}
+              key={book.Id}
+              book={book}
+            />
           )),
         )}
       </div>

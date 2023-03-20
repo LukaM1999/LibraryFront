@@ -82,7 +82,7 @@ export const Modal: FC<ModalProps> = ({
           <button type='button' className='modal-cancel-btn' onClick={closeModal}>
             {cancelText ?? 'Cancel'}
           </button>
-          <button type='submit' className='modal-ok-btn'>
+          <button type='submit' className='modal-confirm-btn'>
             {confirmText ?? 'Confirm'}
           </button>
         </div>

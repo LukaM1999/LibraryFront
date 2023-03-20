@@ -15,29 +15,3 @@
 .select-sort {
   flex: 1;
 }
-
-.apply-sort-btn {
-  border-radius: 0.5em;
-  width: 40px;
-  height: 40px;
-  background-color: #45b398;
-  border: 0;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-.apply-sort-btn {
-  width: 7rem;
-  font-weight: bold;
-}
-
-.apply-sort-btn:hover {
-  background-color: #41c8aa;
-}
-
-.sort-form-footer {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 20px;
-}

@@ -2,16 +2,16 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { HiUserAdd as AddAuthorIcon } from 'react-icons/hi'
 import { MdHideImage as RemoveImageIcon } from 'react-icons/md'
 import Select from 'react-select'
-import { toast } from 'react-toastify'
-import { createAuthor, getAllAuthors } from '../../services/AuthorService'
-import { GetBookResponse } from '../../services/BookService'
-import { Author } from '../BookList/BookList'
+import { Author, Book } from '../BookList/BookList'
 import './BookForm.css'
 
 interface BookFormProps {
-  book?: GetBookResponse | null
+  book?: Book | null
   allAuthors: Author[]
   setBookFormData: React.Dispatch<React.SetStateAction<FormData | null>>
+  authorData: Author | null
+  setAuthorData: React.Dispatch<React.SetStateAction<Author | null>>
+  createNewAuthor: () => void
 }
 
 interface AuthorOption {
@@ -19,13 +19,17 @@ interface AuthorOption {
   value: number
 }
 
-const BookForm: FC<BookFormProps> = ({ book = null, allAuthors, setBookFormData }) => {
+const BookForm: FC<BookFormProps> = ({
+  book = null,
+  allAuthors,
+  setBookFormData,
+  authorData,
+  setAuthorData,
+  createNewAuthor,
+}) => {
   const [authors, setAuthors] = useState<AuthorOption[]>([])
   const [authorOptions, setAuthorOptions] = useState<AuthorOption[]>([])
   const [coverImage, setCoverImage] = useState<string | undefined>('')
-  const [authorFormVisible, setAuthorFormVisible] = useState(false)
-  const [authorFirstName, setAuthorFirstName] = useState('')
-  const [authorLastName, setAuthorLastName] = useState('')
   const hiddenFileInput = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -39,46 +43,18 @@ const BookForm: FC<BookFormProps> = ({ book = null, allAuthors, setBookFormData 
 
   useEffect(() => {
     if (!book) return
+
     if (book.Cover) {
       setCoverImage(`data:image/png;base64,${book.Cover}`)
     }
-    const authors = book.Authors.map((author) => ({
-      label: `${author.Firstname} ${author.Lastname}`,
+
+    const selectedAuthors = book.Authors.map((author) => ({
+      label: `${author.FirstName} ${author.LastName}`,
       value: author.Id,
     }))
-    setAuthors(authors)
+
+    setAuthors(selectedAuthors)
   }, [book])
-
-  const createNewAuthor = async () => {
-    const author: Author = {
-      Id: 0,
-      FirstName: authorFirstName,
-      LastName: authorLastName,
-    }
-
-    await createAuthor(author).catch((error) => {
-      toast.error('Error creating author')
-      throw new Error(error)
-    })
-
-    toast.success('Author created successfully!')
-
-    const { data } = await getAllAuthors().catch((error) => {
-      toast.error('Error retrieving authors')
-      throw new Error(error)
-    })
-
-    setAuthorOptions(
-      data.map((author) => ({
-        label: `${author.FirstName} ${author.LastName}`,
-        value: author.Id,
-      })),
-    )
-
-    setAuthorFormVisible(false)
-    setAuthorFirstName('')
-    setAuthorLastName('')
-  }
 
   const handleInputChange = (field: string, value: string) => {
     setBookFormData((prev) => {
@@ -99,7 +75,11 @@ const BookForm: FC<BookFormProps> = ({ book = null, allAuthors, setBookFormData 
   }
 
   const showAuthorForm = () => {
-    setAuthorFormVisible(true)
+    setAuthorData({
+      Id: 0,
+      FirstName: '',
+      LastName: '',
+    })
   }
 
   const handleCoverClick = () => {
@@ -187,7 +167,7 @@ const BookForm: FC<BookFormProps> = ({ book = null, allAuthors, setBookFormData 
         <label>ISBN</label>
         <input
           type='text'
-          defaultValue={book?.ISBN}
+          defaultValue={book?.Isbn}
           required
           onChange={(e) => handleInputChange('ISBN', e.target.value)}
         />
@@ -224,6 +204,7 @@ const BookForm: FC<BookFormProps> = ({ book = null, allAuthors, setBookFormData 
             value={authors}
             isClearable={false}
             placeholder='Select authors...'
+            menuPlacement='auto'
             onChange={(selectedOptions) => handleAuthorsChange([...selectedOptions])}
           />
           <button
@@ -236,23 +217,33 @@ const BookForm: FC<BookFormProps> = ({ book = null, allAuthors, setBookFormData 
           </button>
         </div>
       </div>
-      {authorFormVisible && (
+      {authorData && (
         <div className='book-form-row'>
           <label>New Author</label>
           <div className='book-form-row'>
             <label>Author First Name</label>
             <input
               type='text'
-              value={authorFirstName}
-              onChange={(e) => setAuthorFirstName(e.target.value)}
+              value={authorData?.FirstName}
+              onChange={(e) =>
+                setAuthorData((prev) => {
+                  if (!prev) return null
+                  return { ...prev, FirstName: e.target.value }
+                })
+              }
             />
           </div>
           <div className='book-form-row'>
             <label>Author Last Name</label>
             <input
               type='text'
-              value={authorLastName}
-              onChange={(e) => setAuthorLastName(e.target.value)}
+              value={authorData?.LastName}
+              onChange={(e) =>
+                setAuthorData((prev) => {
+                  if (!prev) return null
+                  return { ...prev, LastName: e.target.value }
+                })
+              }
             />
           </div>
           <div className='book-form-row'>

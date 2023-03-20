@@ -1,23 +1,24 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { FC, FormEvent, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import { getAllAuthors } from '../../services/AuthorService'
-import { createBook, GetBookResponse, updateBook } from '../../services/BookService'
+import convertBase64ToBlob from '../../helpers/image-helper'
+import { createAuthor, getAllAuthors } from '../../services/AuthorService'
+import { createBook, updateBook } from '../../services/BookService'
 import BookForm from '../BookForm/BookForm'
-import { Author, BookPage } from '../BookList/BookList'
+import { Author, Book, BookPage } from '../BookList/BookList'
 import { Modal } from '../Modal/Modal'
 import './BookFormWrapper.css'
 
 interface BookFormWrapperProps {
-  book?: GetBookResponse
+  book?: Book | null
   isOpen: boolean
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
   closeModal: () => void
 }
 
-const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, setIsOpen }) => {
+const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal }) => {
   const [bookFormData, setBookFormData] = useState<FormData | null>(new FormData())
   const [authors, setAuthors] = useState<Author[]>([])
+  const [authorData, setAuthorData] = useState<Author | null>(null)
   const queryClient = useQueryClient()
 
   useEffect(() => {
@@ -34,9 +35,14 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, setIsOpen }) 
     formData.append('Id', book.Id.toString())
     formData.append('Title', book.Title)
     formData.append('Description', book.Description)
-    formData.append('ISBN', book.ISBN)
+    formData.append('ISBN', book.Isbn)
     formData.append('Quantity', book.Quantity.toString())
     formData.append('PublishDate', book.PublishDate?.toString() || '')
+    if (book.Cover) {
+      convertBase64ToBlob(book.Cover).then((blob) => {
+        formData.append('Cover', blob)
+      })
+    }
     book.Authors.forEach((author) => {
       formData.append('AuthorIds', author.Id.toString())
     })
@@ -65,7 +71,7 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, setIsOpen }) 
         lastPage.books.some((oldBook) => oldBook.Id === book?.Id),
     })
 
-    setIsOpen(false)
+    closeModal()
     toast.success('Book updated successfully!')
   }
 
@@ -81,19 +87,42 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, setIsOpen }) 
       refetchPage: (lastPage: BookPage) => !lastPage.nextPage,
     })
 
-    setIsOpen(false)
+    closeModal()
     toast.success('Book created successfully!')
+  }
+
+  const handleCreateNewAuthor = async () => {
+    if (!authorData) return
+    await createAuthor(authorData).catch((error) => {
+      toast.error('Error creating author')
+      throw new Error(error)
+    })
+    toast.success('Author created successfully!')
+    setAuthorData(null)
+
+    const { data } = await getAllAuthors().catch((error) => {
+      toast.error('Error getting authors')
+      throw new Error(error)
+    })
+    setAuthors(data)
   }
 
   return (
     <div className='book-form-wrapper'>
       <Modal
-        closeModal={() => setIsOpen(false)}
+        closeModal={closeModal}
         confirm={handleConfirm}
         isOpen={isOpen}
         title={book ? 'Edit book' : 'Create book'}
       >
-        <BookForm book={book} allAuthors={authors} setBookFormData={setBookFormData} />
+        <BookForm
+          book={book}
+          allAuthors={authors}
+          setBookFormData={setBookFormData}
+          authorData={authorData}
+          setAuthorData={setAuthorData}
+          createNewAuthor={handleCreateNewAuthor}
+        />
       </Modal>
     </div>
   )

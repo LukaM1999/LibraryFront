@@ -1,11 +1,10 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC } from 'react'
 import Select, { MultiValue } from 'react-select'
 import './SortForm.css'
 
 interface SortFormProps {
   bookSort: string[]
   setBookSort: React.Dispatch<React.SetStateAction<string[]>>
-  hideModal: () => void
 }
 
 interface SortOption {
@@ -22,21 +21,9 @@ const sortOptions: MultiValue<SortOption> = [
   { label: 'ISBN Descending', value: 'Isbn DESC' },
 ]
 
-const SortForm: FC<SortFormProps> = ({ bookSort, setBookSort, hideModal }) => {
-  const [selectedOptions, setSelectedOptions] = useState<MultiValue<SortOption>>([])
-
-  useEffect(() => {
-    const options = bookSort.map((s) => sortOptions.find((o) => o.value === s))
-    setSelectedOptions(options as MultiValue<SortOption>)
-  }, [bookSort])
-
-  const handleApplySort = () => {
-    setBookSort(selectedOptions.map((o) => o.value))
-    hideModal()
-  }
-
+const SortForm: FC<SortFormProps> = ({ bookSort, setBookSort }) => {
   const handleValueChange = (selectedOptions: MultiValue<SortOption>) => {
-    setSelectedOptions(selectedOptions)
+    setBookSort(selectedOptions.map((o) => o.value))
   }
 
   return (
@@ -47,7 +34,9 @@ const SortForm: FC<SortFormProps> = ({ bookSort, setBookSort, hideModal }) => {
           <Select
             className='select-sort'
             options={sortOptions}
-            value={selectedOptions}
+            value={
+              bookSort.map((s) => sortOptions.find((o) => o.value === s)) as MultiValue<SortOption>
+            }
             onChange={handleValueChange}
             isSearchable={true}
             isMulti
@@ -56,16 +45,6 @@ const SortForm: FC<SortFormProps> = ({ bookSort, setBookSort, hideModal }) => {
           />
         </div>
       </label>
-      <div className='sort-form-footer'>
-        <button
-          type='button'
-          className='apply-sort-btn'
-          onClick={handleApplySort}
-          title='Apply sort'
-        >
-          Apply
-        </button>
-      </div>
     </div>
   )
 }

@@ -42,8 +42,10 @@ interface ContextSort {
   setSort: React.Dispatch<React.SetStateAction<string[]>>
 }
 
+const cacheTime = 1000 * 60 * 5
+
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { cacheTime: 1000 * 60 * 5, staleTime: 1000 * 60 * 5 } },
+  defaultOptions: { queries: { cacheTime: cacheTime, staleTime: cacheTime } },
 })
 
 export const createIDBPersister = (idbValidKey: IDBValidKey = 'reactQuery'): Persister => {
@@ -84,7 +86,7 @@ function App() {
   return (
     <PersistQueryClientProvider
       client={queryClient}
-      persistOptions={{ persister: createIDBPersister(), maxAge: 1000 * 60 * 5 }}
+      persistOptions={{ persister: createIDBPersister(), maxAge: cacheTime }}
     >
       <ScrollRestoration />
       <ToastContainer />

@@ -138,7 +138,8 @@ const BookList: FC<BookListProps> = () => {
       <Dialog
         dialogRef={dialog}
         confirm={handleConfirmDelete}
-        title={`Are you sure you want to delete the book "${selectedBook?.Title}?"`}
+        title='Delete book'
+        description={`Are you sure you want to delete the book "${selectedBook?.Title}"?`}
         confirmText='Delete'
       />
 

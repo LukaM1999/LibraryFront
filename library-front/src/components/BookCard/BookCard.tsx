@@ -6,7 +6,6 @@ import { toast } from 'react-toastify'
 import { useJwt } from '../../App'
 import bookCoverPlaceholder from '../../assets/book-cover-placeholder.png'
 import { isAdmin, isLibrarian } from '../../services/AuthService'
-import { getBook } from '../../services/BookService'
 import { Book } from '../BookList/BookList'
 import './BookCard.css'
 
@@ -23,12 +22,7 @@ const BookCard: FC<BookCardProps> = ({ book, handleDelete, handleEdit }) => {
   const role = jwtToken?.role
 
   const handleBookDelete = async () => {
-    const { data } = await getBook(book.Id).catch((err) => {
-      toast.error("Couldn't retrieve book")
-      throw new Error(err)
-    })
-    if (!data) return
-    if (data.Quantity !== data.Available) {
+    if (book.Available === 0) {
       toast.warning("Book is currently being rented and can't be deleted")
       return
     }

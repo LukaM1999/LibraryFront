@@ -28,23 +28,13 @@ export const Modal: FC<ModalProps> = ({
       }
     }
 
-    const handleClickOutside = (event: MouseEvent) => {
-      const modalContent = document.querySelector('.modal-content')
-
-      if (modalContent && !modalContent.contains(event.target as Node)) {
-        closeModal()
-      }
-    }
-
     if (isOpen) {
       document.body.style.overflowY = 'hidden'
       document.addEventListener('keydown', handleEscapeKey)
-      document.addEventListener('mousedown', handleClickOutside)
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscapeKey)
-      document.removeEventListener('mousedown', handleClickOutside)
       document.body.style.overflowY = 'visible'
     }
   }, [isOpen, closeModal])

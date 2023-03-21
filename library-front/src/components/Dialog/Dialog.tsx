@@ -1,4 +1,4 @@
-import { FC, RefObject, useEffect } from 'react'
+import { FC, RefObject } from 'react'
 import './Dialog.css'
 
 interface DialogProps {
@@ -18,21 +18,6 @@ const Dialog: FC<DialogProps> = ({
   cancelText,
   confirm,
 }) => {
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const modalContent = document.querySelector('.dialog-content')
-
-      if (modalContent && !modalContent.contains(event.target as Node)) {
-        dialogRef.current?.close()
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
-
   const handleConfirm = () => {
     confirm()
     dialogRef.current?.close()
@@ -43,6 +28,7 @@ const Dialog: FC<DialogProps> = ({
       <div className='dialog-container'>
         <div className='dialog-content'>
           <div className='dialog-header'>
+            <h3>{title}</h3>
             <button
               type='button'
               className='dialog-close-button'
@@ -52,7 +38,6 @@ const Dialog: FC<DialogProps> = ({
             </button>
           </div>
           <div className='confirm-form'>
-            <h3>{title}</h3>
             {description && <p>{description}</p>}
             <div className='confirm-form-actions'>
               <button

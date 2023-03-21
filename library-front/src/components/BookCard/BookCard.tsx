@@ -1,43 +1,49 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { AiOutlineEdit as EditIcon } from 'react-icons/ai'
-import { FiDelete as DeleteIcon } from 'react-icons/fi'
+import { MdDeleteForever as DeleteIcon } from 'react-icons/md'
+import { toast } from 'react-toastify'
 import { useJwt } from '../../App'
-import BookForm from '../BookForm/BookForm'
+import { isAdmin, isLibrarian } from '../../services/AuthService'
+import { getBook } from '../../services/BookService'
 import { Book } from '../BookList/BookList'
-import { Modal } from '../Modal/Modal'
 import './BookCard.css'
 
 interface BookCardProps {
   book: Book
+  handleDelete: (book: Book) => void
+  handleEdit: (book: Book) => void
 }
 
-const BookCard: FC<BookCardProps> = ({ book }) => {
+const BookCard: FC<BookCardProps> = ({ book, handleDelete, handleEdit }) => {
   const { jwtToken } = useJwt()
-  const [bookModalVisible, setBookModalVisible] = useState(false)
 
   const role = jwtToken?.role
 
-  const showBookModal = () => {
-    setBookModalVisible(true)
+  const handleBookDelete = async () => {
+    const { data } = await getBook(book.Id).catch((err) => {
+      toast.error("Couldn't retrieve book")
+      throw new Error(err)
+    })
+    if (!data) return
+    if (data.Quantity !== data.Available) {
+      toast.warning("Book is currently being rented and can't be deleted")
+      return
+    }
+    handleDelete(book)
   }
 
   return (
     <div className='book-card'>
-      <Modal
-        id='bookModal'
-        closeModal={() => {
-          setBookModalVisible(false)
-        }}
-        isOpen={bookModalVisible}
-      >
-        <BookForm hideModal={() => setBookModalVisible(false)} bookId={book.Id} />
-      </Modal>
-      {role && role !== 'User' && (
+      {(isAdmin(role) || isLibrarian(role)) && (
         <div className='book-card-actions'>
-          <button onClick={showBookModal} title='Edit book' className='book-card-btn'>
+          <button onClick={() => handleEdit(book)} title='Edit book' className='book-card-btn'>
             <EditIcon size='100%' />
           </button>
-          <button title='Delete book' className='book-card-btn delete-book'>
+          <button
+            title='Delete book'
+            className='book-card-btn delete-book'
+            onClick={handleBookDelete}
+          >
             <DeleteIcon size='100%' />
           </button>
         </div>

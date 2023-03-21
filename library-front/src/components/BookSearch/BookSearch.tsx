@@ -1,6 +1,6 @@
+import debounce from 'lodash.debounce'
 import { FC, useEffect, useMemo } from 'react'
 import './BookSearch.css'
-import debounce from 'lodash.debounce'
 
 interface BookSearchProps {
   handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void

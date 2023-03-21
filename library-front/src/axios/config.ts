@@ -1,6 +1,6 @@
 import axios from 'axios'
 import jwtDecode from 'jwt-decode'
-import { JwtRole, setJwt, roleKey } from '../helpers/jwt-helper'
+import { JwtRole, roleKey, setJwt } from '../helpers/jwt-helper'
 import { refreshAccessToken } from '../services/AuthService'
 import { getItem } from '../services/StorageService'
 

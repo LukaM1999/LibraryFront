@@ -1,7 +1,7 @@
 import { FC } from 'react'
-import NavButton from '../NavButton/NavButton'
 import { AiFillHome as HomeIcon } from 'react-icons/ai'
 import { FaUserAlt as ProfileIcon } from 'react-icons/fa'
+import NavButton from '../NavButton/NavButton'
 import './Navbar.css'
 
 interface NavbarProps {}

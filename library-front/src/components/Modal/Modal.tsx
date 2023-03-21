@@ -1,17 +1,26 @@
-import { FC, ReactNode, useEffect, useRef } from 'react'
+import { FC, FormEvent, ReactNode, useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom'
-import { createRoot } from 'react-dom/client'
 import './Modal.css'
-import { addModal } from './ModalManager'
 
 interface ModalProps {
-  id: string
   isOpen: boolean
   closeModal: () => void
+  confirm: (event: FormEvent<HTMLFormElement>) => void
   children: ReactNode
+  title?: string
+  cancelText?: string
+  confirmText?: string
 }
 
-export const Modal: FC<ModalProps> = ({ id, isOpen, closeModal, children }) => {
+export const Modal: FC<ModalProps> = ({
+  isOpen,
+  closeModal,
+  confirm,
+  children,
+  title,
+  cancelText,
+  confirmText,
+}) => {
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -28,7 +37,6 @@ export const Modal: FC<ModalProps> = ({ id, isOpen, closeModal, children }) => {
     }
 
     if (isOpen) {
-      addModal(id, closeModal)
       document.body.style.overflowY = 'hidden'
       document.addEventListener('keydown', handleEscapeKey)
       document.addEventListener('mousedown', handleClickOutside)
@@ -41,7 +49,7 @@ export const Modal: FC<ModalProps> = ({ id, isOpen, closeModal, children }) => {
     }
   }, [isOpen, closeModal])
 
-  const modalRef = useRef<HTMLDivElement>(null)
+  const modalRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
     if (modalRef.current) {
@@ -62,45 +70,24 @@ export const Modal: FC<ModalProps> = ({ id, isOpen, closeModal, children }) => {
   return ReactDOM.createPortal(
     <div className={`modal ${isOpen ? 'show' : 'hide'}`}>
       <div className='modal-overlay' onClick={closeModal} />
-      <div className='modal-content' ref={modalRef}>
+      <form onSubmit={confirm} className='modal-content' ref={modalRef}>
         <div className='modal-header'>
-          <button className='close-button' onClick={closeModal}>
+          <h3>{title}</h3>
+          <button type='button' className='close-button' onClick={closeModal}>
             X
           </button>
         </div>
         {children}
-      </div>
+        <div className='modal-footer'>
+          <button type='button' className='modal-cancel-btn' onClick={closeModal}>
+            {cancelText ?? 'Cancel'}
+          </button>
+          <button type='submit' className='modal-confirm-btn'>
+            {confirmText ?? 'Confirm'}
+          </button>
+        </div>
+      </form>
     </div>,
     document.body,
   )
 }
-
-const showModal = (modalId: string, content: ReactNode) => {
-  const handleClose = () => {
-    modalRootNode.unmount()
-    modalRoot.remove()
-    document.body.style.overflow = 'auto'
-  }
-
-  const modal = (
-    <Modal id={modalId} isOpen={true} closeModal={handleClose}>
-      {content}
-    </Modal>
-  )
-
-  const modalRoot = document.createElement('div')
-  modalRoot.setAttribute('id', 'modal-root')
-  document.body.appendChild(modalRoot)
-
-  const modalRootNode = createRoot(modalRoot)
-  modalRootNode.render(modal)
-
-  document.body.style.overflow = 'hidden'
-
-  const closeButton = document.querySelector('.close-button')
-  if (closeButton) {
-    closeButton.addEventListener('click', handleClose)
-  }
-}
-
-export default showModal

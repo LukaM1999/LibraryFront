@@ -3,6 +3,7 @@ import { AiOutlineEdit as EditIcon } from 'react-icons/ai'
 import { MdDeleteForever as DeleteIcon } from 'react-icons/md'
 import { toast } from 'react-toastify'
 import { useJwt } from '../../App'
+import { isAdmin, isLibrarian } from '../../services/AuthService'
 import { getBook } from '../../services/BookService'
 import { Book } from '../BookList/BookList'
 import './BookCard.css'
@@ -33,7 +34,7 @@ const BookCard: FC<BookCardProps> = ({ book, handleDelete, handleEdit }) => {
 
   return (
     <div className='book-card'>
-      {role && role !== 'User' && (
+      {(isAdmin(role) || isLibrarian(role)) && (
         <div className='book-card-actions'>
           <button onClick={() => handleEdit(book)} title='Edit book' className='book-card-btn'>
             <EditIcon size='100%' />

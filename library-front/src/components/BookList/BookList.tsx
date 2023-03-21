@@ -4,6 +4,7 @@ import { BiBookAdd as AddIcon } from 'react-icons/bi'
 import { useInView } from 'react-intersection-observer'
 import { toast } from 'react-toastify'
 import { useFilters, useJwt, useSearch, useSort } from '../../App'
+import { isAdmin, isLibrarian } from '../../services/AuthService'
 import { deleteBook, getBooksPaged, WhereBookQuery } from '../../services/BookService'
 import BookCard from '../BookCard/BookCard'
 import BookFormWrapper from '../BookFormWrapper/BookFormWrapper'
@@ -100,7 +101,7 @@ const BookList: FC<BookListProps> = () => {
     setBookModalVisible(false)
   }
 
-  const handleDelete = (selectedBook: Book) => {
+  const openDeleteDialog = (selectedBook: Book) => {
     setSelectedBook(selectedBook)
     dialog.current?.showModal()
   }
@@ -120,7 +121,7 @@ const BookList: FC<BookListProps> = () => {
     setSelectedBook(null)
   }
 
-  const handleEdit = (selectedBook: Book) => {
+  const openEditModal = (selectedBook: Book) => {
     setSelectedBook(selectedBook)
     setBookModalVisible(true)
   }
@@ -143,15 +144,15 @@ const BookList: FC<BookListProps> = () => {
         {data?.pages?.map((page) =>
           page?.books?.map((book) => (
             <BookCard
-              handleDelete={handleDelete}
-              handleEdit={handleEdit}
+              handleDelete={openDeleteDialog}
+              handleEdit={openEditModal}
               key={book.Id}
               book={book}
             />
           )),
         )}
       </div>
-      {role && role !== 'User' && (
+      {(isAdmin(role) || isLibrarian(role)) && (
         <button title='New book' onClick={showBookModal} className='btn-add-book'>
           <AddIcon size='100%' />
         </button>

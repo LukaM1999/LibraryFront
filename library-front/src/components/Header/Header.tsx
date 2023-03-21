@@ -19,19 +19,11 @@ interface HeaderProps {
   setSort: React.Dispatch<React.SetStateAction<string[]>>
 }
 
-const Header: FC<HeaderProps> = ({
-  jwt,
-  setJwt,
-  setSearch,
-  filters,
-  setFilters,
-  sort,
-  setSort,
-}) => {
+const Header: FC<HeaderProps> = ({ jwt, setJwt, setSearch, setFilters, setSort }) => {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true)
   const [prevScrollPos, setPrevScrollPos] = useState(0)
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const [visibleModal, setVisibleModal] = useState<'filter' | 'sort'>('filter')
+  const [activeModal, setActiveModal] = useState<'filter' | 'sort'>('filter')
   const [bookFilters, setBookFilters] = useState<BookFilter[]>([])
   const [bookSort, setBookSort] = useState<string[]>([])
 
@@ -62,18 +54,18 @@ const Header: FC<HeaderProps> = ({
   }
 
   const showFilterModal = () => {
-    setVisibleModal('filter')
+    setActiveModal('filter')
     setIsModalVisible(true)
   }
 
   const showSortModal = () => {
-    setVisibleModal('sort')
+    setActiveModal('sort')
     setIsModalVisible(true)
   }
 
   const handleFilterAndSort = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (visibleModal === 'filter') {
+    if (activeModal === 'filter') {
       setFilters(bookFilters)
     } else {
       setSort(bookSort)
@@ -90,14 +82,14 @@ const Header: FC<HeaderProps> = ({
       <Modal
         closeModal={handleCloseModal}
         isOpen={isModalVisible}
-        title={visibleModal === 'filter' ? 'Filter books' : 'Sort books'}
-        confirmText={visibleModal === 'filter' ? 'Filter' : 'Sort'}
+        title={activeModal === 'filter' ? 'Filter books' : 'Sort books'}
+        confirmText={activeModal === 'filter' ? 'Filter' : 'Sort'}
         confirm={handleFilterAndSort}
       >
-        {visibleModal === 'filter' && (
+        {activeModal === 'filter' && (
           <FilterForm bookFilters={bookFilters} setBookFilters={setBookFilters} />
         )}
-        {visibleModal === 'sort' && <SortForm bookSort={bookSort} setBookSort={setBookSort} />}
+        {activeModal === 'sort' && <SortForm bookSort={bookSort} setBookSort={setBookSort} />}
       </Modal>
 
       <div className='header-left'></div>

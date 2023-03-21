@@ -16,6 +16,12 @@ export const refreshAccessToken = async (): Promise<AxiosResponse<RefreshTokenRe
   })
 }
 
+export const isUser = (role: string) => role === 'User'
+
+export const isAdmin = (role: string) => role === 'Admin'
+
+export const isLibrarian = (role: string) => role === 'Librarian'
+
 export interface LoginRequest {
   Email: string
   Password: string

@@ -7,7 +7,6 @@ import { createBook, updateBook } from '../../services/BookService'
 import BookForm from '../BookForm/BookForm'
 import { Author, Book, BookPage } from '../BookList/BookList'
 import { Modal } from '../Modal/Modal'
-import './BookFormWrapper.css'
 
 interface BookFormWrapperProps {
   book?: Book | null
@@ -18,7 +17,7 @@ interface BookFormWrapperProps {
 const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal }) => {
   const [bookFormData, setBookFormData] = useState<FormData | null>(new FormData())
   const [authors, setAuthors] = useState<Author[]>([])
-  const [authorData, setAuthorData] = useState<Author | null>(null)
+  const [authorFormData, setAuthorFormData] = useState<Author | null>(null)
   const queryClient = useQueryClient()
 
   useEffect(() => {
@@ -92,13 +91,13 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal })
   }
 
   const handleCreateNewAuthor = async () => {
-    if (!authorData) return
-    await createAuthor(authorData).catch((error) => {
+    if (!authorFormData) return
+    await createAuthor(authorFormData).catch((error) => {
       toast.error('Error creating author')
       throw new Error(error)
     })
     toast.success('Author created successfully!')
-    setAuthorData(null)
+    setAuthorFormData(null)
 
     const { data } = await getAllAuthors().catch((error) => {
       toast.error('Error getting authors')
@@ -108,7 +107,7 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal })
   }
 
   return (
-    <div className='book-form-wrapper'>
+    <>
       <Modal
         closeModal={closeModal}
         confirm={handleConfirm}
@@ -119,12 +118,12 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal })
           book={book}
           allAuthors={authors}
           setBookFormData={setBookFormData}
-          authorData={authorData}
-          setAuthorData={setAuthorData}
+          authorData={authorFormData}
+          setAuthorData={setAuthorFormData}
           createNewAuthor={handleCreateNewAuthor}
         />
       </Modal>
-    </div>
+    </>
   )
 }
 

@@ -1,19 +1,19 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { FC, useEffect, useRef, useState } from 'react'
 import { HiUserAdd as AddAuthorIcon } from 'react-icons/hi'
 import { MdHideImage as RemoveImageIcon } from 'react-icons/md'
 import Select from 'react-select'
 import { toast } from 'react-toastify'
 import bookCoverPlaceholder from '../../assets/book-cover-placeholder.png'
-import convertBase64ToBlob from '../../helpers/image-helper'
-import { createAuthor, getAllAuthors } from '../../services/AuthorService'
-import { createBook, getBook, updateBook } from '../../services/BookService'
-import { Author, BookPage } from '../BookList/BookList'
+import { Author, Book } from '../BookList/BookList'
 import './BookForm.css'
 
 interface BookFormProps {
-  bookId?: number
-  submit: () => void
+  book?: Book | null
+  allAuthors: Author[]
+  setBookFormData: React.Dispatch<React.SetStateAction<FormData | null>>
+  authorData: Author | null
+  setAuthorData: React.Dispatch<React.SetStateAction<Author | null>>
+  createNewAuthor: () => void
 }
 
 interface AuthorOption {
@@ -21,157 +21,74 @@ interface AuthorOption {
   value: number
 }
 
-const BookForm: FC<BookFormProps> = ({ bookId, submit }) => {
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
+const BookForm: FC<BookFormProps> = ({
+  book = null,
+  allAuthors,
+  setBookFormData,
+  authorData,
+  setAuthorData,
+  createNewAuthor,
+}) => {
   const [authors, setAuthors] = useState<AuthorOption[]>([])
   const [authorOptions, setAuthorOptions] = useState<AuthorOption[]>([])
-  const [isbn, setIsbn] = useState('')
-  const [quantity, setQuantity] = useState<number | undefined>(1)
-  const [cover, setCover] = useState<File | null>(null)
   const [coverImage, setCoverImage] = useState<string | undefined>('')
-  const [publishDate, setPublishDate] = useState<string>('')
-  const [authorFormVisible, setAuthorFormVisible] = useState(false)
-  const [authorFirstName, setAuthorFirstName] = useState('')
-  const [authorLastName, setAuthorLastName] = useState('')
   const hiddenFileInput = useRef<HTMLInputElement>(null)
 
-  const queryClient = useQueryClient()
-
   useEffect(() => {
-    if (bookId) {
-      getBook(bookId).then(({ data }) => {
-        setTitle(data.Title)
-        setDescription(data.Description)
-        setAuthors(
-          data.Authors.map((author) => ({
-            label: `${author.Firstname} ${author.Lastname}`,
-            value: author.Id,
-          })),
-        )
-        setIsbn(data.ISBN)
-        setQuantity(data.Quantity)
-        setPublishDate(data.PublishDate?.toString())
-        if (data.Cover) {
-          setCoverImage(`data:image/png;base64,${data.Cover}`)
-        }
-      })
-    }
-
-    getAllAuthors().then(({ data }) => {
-      setAuthorOptions(
-        data.map((author) => ({
-          label: `${author.FirstName} ${author.LastName}`,
-          value: author.Id,
-        })),
-      )
-    })
-  }, [])
-
-  const createNewAuthor = async () => {
-    const author: Author = {
-      Id: 0,
-      FirstName: authorFirstName,
-      LastName: authorLastName,
-    }
-
-    await createAuthor(author).catch((error) => {
-      toast.error('Error creating author')
-      throw new Error(error)
-    })
-
-    toast.success('Author created successfully!')
-
-    const { data } = await getAllAuthors().catch((error) => {
-      toast.error('Error retrieving authors')
-      throw new Error(error)
-    })
-
     setAuthorOptions(
-      data.map((author) => ({
+      allAuthors?.map((author) => ({
         label: `${author.FirstName} ${author.LastName}`,
         value: author.Id,
       })),
     )
+  }, [allAuthors])
 
-    setAuthorFormVisible(false)
-    setAuthorFirstName('')
-    setAuthorLastName('')
-  }
+  useEffect(() => {
+    if (!book) return
 
-  const handleBookFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (bookId) {
-      await updateSelectedBook(bookId)
-      return
-    }
-    await createNewBook()
-  }
-
-  const createBookFormData = () => {
-    const formData = new FormData()
-    formData.append('Title', title)
-    formData.append('Description', description)
-    formData.append('Isbn', isbn)
-    formData.append('Quantity', quantity?.toString() || '1')
-    authors.forEach((author) => formData.append('AuthorIds', author.value.toString()))
-    return formData
-  }
-
-  const updateSelectedBook = async (bookId: number) => {
-    const formData = createBookFormData()
-    formData.append('Id', bookId.toString())
-    formData.append(
-      'PublishDate',
-      publishDate ? new Intl.DateTimeFormat('en-US').format(new Date(publishDate)) : '',
-    )
-    formData.append('Cover', coverImage ? convertBase64ToBlob(coverImage) : '')
-
-    await updateBook(formData).catch((error) => {
-      toast.error('Error updating book')
-      throw new Error(error)
-    })
-
-    queryClient.invalidateQueries({
-      queryKey: ['books'],
-      refetchPage: (lastPage: BookPage) => lastPage.books.some((book) => book.Id === bookId),
-    })
-
-    submit()
-    toast.success('Book updated successfully!')
-  }
-
-  const createNewBook = async () => {
-    const formData = createBookFormData()
-    if (publishDate) {
-      formData.append('PublishDate', publishDate)
-    }
-    if (cover) {
-      formData.append('Cover', cover)
+    if (book.Cover) {
+      setCoverImage(`data:image/png;base64,${book.Cover}`)
     }
 
-    await createBook(formData).catch((error) => {
-      toast.error('Error creating book')
-      throw new Error(error)
-    })
+    const selectedAuthors = book.Authors.map((author) => ({
+      label: `${author.FirstName} ${author.LastName}`,
+      value: author.Id,
+    }))
 
-    queryClient.invalidateQueries({
-      queryKey: ['books'],
-      refetchPage: (lastPage: BookPage) => !lastPage.nextPage,
-    })
+    setAuthors(selectedAuthors)
+  }, [book])
 
-    submit()
-    toast.success('Book created successfully!')
+  const handleInputChange = (field: string, value: string) => {
+    setBookFormData((prev) => {
+      if (!prev) return null
+      prev.set(field, value)
+      return prev
+    })
+  }
+
+  const handleAuthorsChange = (selectedAuthors: AuthorOption[]) => {
+    setAuthors(selectedAuthors)
+    setBookFormData((prev) => {
+      if (!prev) return null
+      prev.delete('AuthorIds')
+      selectedAuthors.forEach((author) => prev.append('AuthorIds', author.value.toString()))
+      return prev
+    })
   }
 
   const showAuthorForm = () => {
-    setAuthorFormVisible(true)
+    setAuthorData({
+      Id: 0,
+      FirstName: '',
+      LastName: '',
+    })
   }
 
   const handleCoverClick = () => {
     if (!hiddenFileInput.current) return
     hiddenFileInput.current.click()
   }
+
   const handleFileChange = ({ currentTarget }: React.FormEvent<HTMLInputElement>) => {
     if (!currentTarget.files) return
     const files = currentTarget.files
@@ -189,7 +106,11 @@ const BookForm: FC<BookFormProps> = ({ bookId, submit }) => {
     }
 
     reader.readAsDataURL(files[0])
-    setCover(files[0])
+    setBookFormData((prev) => {
+      if (!prev) return null
+      prev.set('Cover', files[0])
+      return prev
+    })
     reader.onloadend = function () {
       const base64data = reader.result
       if (!base64data) return
@@ -199,11 +120,15 @@ const BookForm: FC<BookFormProps> = ({ bookId, submit }) => {
 
   const removeImage = () => {
     setCoverImage('')
-    setCover(null)
+    setBookFormData((prev) => {
+      if (!prev) return null
+      prev.delete('Cover')
+      return prev
+    })
   }
 
   return (
-    <form className='book-form' onSubmit={handleBookFormSubmit}>
+    <div className='book-form'>
       <div className='book-form-row'>
         <label>Cover</label>
         <div className='book-cover-container'>
@@ -237,22 +162,40 @@ const BookForm: FC<BookFormProps> = ({ bookId, submit }) => {
       </div>
       <div className='book-form-row'>
         <label>Title</label>
-        <input type='text' required value={title} onChange={(e) => setTitle(e.target.value)} />
+        <input
+          type='text'
+          required
+          defaultValue={book?.Title}
+          onChange={(e) => handleInputChange('Title', e.target.value)}
+        />
       </div>
       <div className='book-form-row'>
         <label>Description</label>
-        <textarea value={description} required onChange={(e) => setDescription(e.target.value)} />
+        <textarea
+          defaultValue={book?.Description}
+          required
+          onChange={(e) => handleInputChange('Description', e.target.value)}
+        />
       </div>
       <div className='book-form-row'>
         <label>ISBN</label>
-        <input type='text' value={isbn} required onChange={(e) => setIsbn(e.target.value)} />
+        <input
+          type='text'
+          defaultValue={book?.Isbn}
+          required
+          onChange={(e) => handleInputChange('ISBN', e.target.value)}
+        />
       </div>
       <div className='book-form-row'>
         <label>Publish Date</label>
         <input
           type='date'
-          value={publishDate ? new Intl.DateTimeFormat('en-CA').format(new Date(publishDate)) : ''}
-          onChange={(e) => setPublishDate(e.target.value)}
+          defaultValue={
+            book?.PublishDate
+              ? new Intl.DateTimeFormat('en-CA').format(new Date(book.PublishDate))
+              : ''
+          }
+          onChange={(e) => handleInputChange('PublishDate', e.target.value)}
         />
       </div>
       <div className='book-form-row'>
@@ -260,8 +203,8 @@ const BookForm: FC<BookFormProps> = ({ bookId, submit }) => {
         <input
           type='number'
           min='1'
-          value={quantity}
-          onChange={(e) => setQuantity(parseInt(e.target.value))}
+          defaultValue={book?.Quantity}
+          onChange={(e) => handleInputChange('Quantity', e.target.value)}
           required
         />
       </div>
@@ -275,15 +218,14 @@ const BookForm: FC<BookFormProps> = ({ bookId, submit }) => {
             value={authors}
             isClearable={false}
             placeholder='Select authors...'
-            onChange={(selectedOptions) => {
-              setAuthors([...selectedOptions])
-            }}
             styles={{
               menu: (baseStyles) => ({
                 ...baseStyles,
                 position: 'sticky',
               }),
             }}
+            menuPlacement='auto'
+            onChange={(selectedOptions) => handleAuthorsChange([...selectedOptions])}
           />
           <button
             type='button'
@@ -295,23 +237,33 @@ const BookForm: FC<BookFormProps> = ({ bookId, submit }) => {
           </button>
         </div>
       </div>
-      {authorFormVisible && (
+      {authorData && (
         <div className='book-form-row'>
           <label>New Author</label>
           <div className='book-form-row'>
             <label>Author First Name</label>
             <input
               type='text'
-              value={authorFirstName}
-              onChange={(e) => setAuthorFirstName(e.target.value)}
+              value={authorData?.FirstName}
+              onChange={(e) =>
+                setAuthorData((prev) => {
+                  if (!prev) return null
+                  return { ...prev, FirstName: e.target.value }
+                })
+              }
             />
           </div>
           <div className='book-form-row'>
             <label>Author Last Name</label>
             <input
               type='text'
-              value={authorLastName}
-              onChange={(e) => setAuthorLastName(e.target.value)}
+              value={authorData?.LastName}
+              onChange={(e) =>
+                setAuthorData((prev) => {
+                  if (!prev) return null
+                  return { ...prev, LastName: e.target.value }
+                })
+              }
             />
           </div>
           <div className='book-form-row'>
@@ -326,13 +278,7 @@ const BookForm: FC<BookFormProps> = ({ bookId, submit }) => {
           </div>
         </div>
       )}
-
-      <div className='book-form-row'>
-        <button type='submit' className='create-book-btn' title='Create new book'>
-          {bookId ? 'Update Book' : 'Create book'}
-        </button>
-      </div>
-    </form>
+    </div>
   )
 }
 

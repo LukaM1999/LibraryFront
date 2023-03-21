@@ -4,11 +4,11 @@ import { BiBookAdd as AddIcon } from 'react-icons/bi'
 import { useInView } from 'react-intersection-observer'
 import { toast } from 'react-toastify'
 import { useFilters, useJwt, useSearch, useSort } from '../../App'
+import { isAdmin, isLibrarian } from '../../services/AuthService'
 import { deleteBook, getBooksPaged, WhereBookQuery } from '../../services/BookService'
 import BookCard from '../BookCard/BookCard'
-import BookForm from '../BookForm/BookForm'
+import BookFormWrapper from '../BookFormWrapper/BookFormWrapper'
 import Dialog from '../Dialog/Dialog'
-import { Modal } from '../Modal/Modal'
 import './BookList.css'
 
 interface BookListProps {}
@@ -21,7 +21,8 @@ export interface Book {
   Isbn: string
   PublishDate: Date
   Authors: Author[]
-  Quantity?: number
+  Quantity: number
+  Available: number
 }
 
 export interface Author {
@@ -52,7 +53,7 @@ const BookList: FC<BookListProps> = () => {
   const { jwtToken } = useJwt()
   const [bookModalVisible, setBookModalVisible] = useState(false)
   const dialog = useRef<HTMLDialogElement>(null)
-  const [bookForDelete, setBookForDelete] = useState<Book | null>(null)
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null)
   const queryClient = useQueryClient()
 
   const role = jwtToken?.role
@@ -97,53 +98,63 @@ const BookList: FC<BookListProps> = () => {
     }
   }, [inView])
 
-  const handleDelete = (selectedBook: Book) => {
-    setBookForDelete(selectedBook)
+  const handleCloseModal = () => {
+    setSelectedBook(null)
+    setBookModalVisible(false)
+  }
+
+  const openDeleteDialog = (selectedBook: Book) => {
+    setSelectedBook(selectedBook)
     dialog.current?.showModal()
   }
 
   const handleConfirmDelete = async () => {
-    if (!bookForDelete) return
-    await deleteBook(bookForDelete.Id).catch((err) => {
+    if (!selectedBook) return
+    await deleteBook(selectedBook.Id).catch((err) => {
       toast.error("Couldn't delete book")
       throw new Error(err)
     })
     queryClient.invalidateQueries({
       queryKey: ['books'],
       refetchPage: (lastPage: BookPage) =>
-        lastPage.books.some((deletedBook) => bookForDelete.Id === deletedBook.Id),
+        lastPage.books.some((deletedBook) => selectedBook.Id === deletedBook.Id),
     })
     toast.success('Book deleted successfully')
-    setBookForDelete(null)
+    setSelectedBook(null)
+  }
+
+  const openEditModal = (selectedBook: Book) => {
+    setSelectedBook(selectedBook)
+    setBookModalVisible(true)
   }
 
   return (
     <>
-      <Modal
-        id='bookModal'
-        closeModal={() => {
-          setBookModalVisible(false)
-        }}
+      <BookFormWrapper
+        closeModal={handleCloseModal}
         isOpen={bookModalVisible}
-        title='Create book'
-      >
-        <BookForm submit={() => setBookModalVisible(false)} />
-      </Modal>
+        book={selectedBook}
+      />
       <Dialog
         dialogRef={dialog}
         confirm={handleConfirmDelete}
-        title={`Are you sure you want to delete the book "${bookForDelete?.Title}?"`}
+        title={`Are you sure you want to delete the book "${selectedBook?.Title}?"`}
         confirmText='Delete'
       />
 
       <div className='book-list'>
         {data?.pages?.map((page) =>
           page?.books?.map((book) => (
-            <BookCard handleDelete={handleDelete} key={book.Id} book={book} />
+            <BookCard
+              handleDelete={openDeleteDialog}
+              handleEdit={openEditModal}
+              key={book.Id}
+              book={book}
+            />
           )),
         )}
       </div>
-      {role && role !== 'User' && (
+      {(isAdmin(role) || isLibrarian(role)) && (
         <button title='New book' onClick={showBookModal} className='btn-add-book'>
           <AddIcon size='100%' />
         </button>

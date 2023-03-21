@@ -1,7 +1,6 @@
 import { ChangeEvent, FC, useState } from 'react'
 import { MdDeleteForever as RemoveFilterIcon } from 'react-icons/md'
 import { SiAddthis as AddFilterIcon } from 'react-icons/si'
-import { Form } from 'react-router-dom'
 import Select from 'react-select'
 import { MultiValue, SingleValue } from 'react-select/dist/declarations/src'
 import { WhereBookQuery } from '../../services/BookService'
@@ -10,7 +9,6 @@ import './FilterForm.css'
 interface FilterFormProps {
   bookFilters: BookFilter[]
   setBookFilters: React.Dispatch<React.SetStateAction<BookFilter[]>>
-  hideModal: () => void
 }
 
 export interface BookFilter extends WhereBookQuery {
@@ -27,9 +25,8 @@ const fieldOptions: MultiValue<FilterField> = [
   { label: 'Author Last Name', value: 'Authors.Lastname' },
 ]
 
-const FilterForm: FC<FilterFormProps> = ({ bookFilters, setBookFilters, hideModal }) => {
+const FilterForm: FC<FilterFormProps> = ({ bookFilters, setBookFilters }) => {
   const [value, setValue] = useState<FilterField | null>(fieldOptions[0])
-  const [filters, setFilters] = useState<BookFilter[]>(bookFilters)
 
   const handleAddFilter = () => {
     if (!value) return
@@ -39,7 +36,7 @@ const FilterForm: FC<FilterFormProps> = ({ bookFilters, setBookFilters, hideModa
       Value: '',
       Operation: 2,
     }
-    setFilters((filters) => [...filters, newFilter])
+    setBookFilters((filters) => [...filters, newFilter])
   }
 
   const handleFilterFieldChange = (newValue: SingleValue<FilterField>) => {
@@ -51,25 +48,19 @@ const FilterForm: FC<FilterFormProps> = ({ bookFilters, setBookFilters, hideModa
     filter: BookFilter,
   ) => {
     filter.Value = event.target.value
-    setFilters((filters) => [...filters.filter((f) => f.id !== filter.id), filter])
+    setBookFilters((filters) => [...filters.filter((f) => f.id !== filter.id), filter])
   }
 
   const handleRemoveFilter = (filter: BookFilter) => {
-    setFilters((filters) => [...filters.filter((f) => f.id !== filter.id)])
-  }
-
-  const handleApplyFilters = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setBookFilters(filters)
-    hideModal()
+    setBookFilters((filters) => [...filters.filter((f) => f.id !== filter.id)])
   }
 
   const handleClearFilters = () => {
-    setFilters([])
+    setBookFilters([])
   }
 
   return (
-    <Form onSubmit={handleApplyFilters} className='filter-form'>
+    <div className='filter-form'>
       <label>
         Add filter
         <div className='select-container'>
@@ -99,7 +90,7 @@ const FilterForm: FC<FilterFormProps> = ({ bookFilters, setBookFilters, hideModa
       <label>
         Filters
         <div className='filters-container'>
-          {filters.map((filter) => (
+          {bookFilters.map((filter) => (
             <div key={filter.id} className='filter'>
               <label>{fieldOptions.find((opt) => opt.value === filter.Field)?.label}</label>
               <div className='filter-container'>
@@ -124,9 +115,6 @@ const FilterForm: FC<FilterFormProps> = ({ bookFilters, setBookFilters, hideModa
         </div>
       </label>
       <div className='filter-form-footer'>
-        <button className='apply-filters-btn' title='Apply filters'>
-          Apply
-        </button>
         <button
           type='button'
           onClick={handleClearFilters}
@@ -136,7 +124,7 @@ const FilterForm: FC<FilterFormProps> = ({ bookFilters, setBookFilters, hideModa
           Clear
         </button>
       </div>
-    </Form>
+    </div>
   )
 }
 

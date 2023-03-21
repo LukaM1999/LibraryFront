@@ -1,24 +1,23 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { AiOutlineEdit as EditIcon } from 'react-icons/ai'
 import { MdDeleteForever as DeleteIcon } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { useJwt } from '../../App'
 import bookCoverPlaceholder from '../../assets/book-cover-placeholder.png'
+import { isAdmin, isLibrarian } from '../../services/AuthService'
 import { getBook } from '../../services/BookService'
-import BookForm from '../BookForm/BookForm'
 import { Book } from '../BookList/BookList'
-import { Modal } from '../Modal/Modal'
 import './BookCard.css'
 
 interface BookCardProps {
   book: Book
   handleDelete: (book: Book) => void
+  handleEdit: (book: Book) => void
 }
 
-const BookCard: FC<BookCardProps> = ({ book, handleDelete }) => {
+const BookCard: FC<BookCardProps> = ({ book, handleDelete, handleEdit }) => {
   const { jwtToken } = useJwt()
-  const [modalVisible, setModalVisible] = useState(false)
   const navigate = useNavigate()
 
   const role = jwtToken?.role
@@ -36,25 +35,11 @@ const BookCard: FC<BookCardProps> = ({ book, handleDelete }) => {
     handleDelete(book)
   }
 
-  const handleBookFormSubmit = () => {
-    setModalVisible(false)
-  }
-
   return (
     <div className='book-card'>
-      <Modal
-        id='bookModal'
-        closeModal={() => {
-          setModalVisible(false)
-        }}
-        isOpen={modalVisible}
-        title='Edit book'
-      >
-        <BookForm submit={handleBookFormSubmit} bookId={book.Id} />
-      </Modal>
-      {role && role !== 'User' && (
+      {(isAdmin(role) || isLibrarian(role)) && (
         <div className='book-card-actions'>
-          <button onClick={() => setModalVisible(true)} title='Edit book' className='book-card-btn'>
+          <button onClick={() => handleEdit(book)} title='Edit book' className='book-card-btn'>
             <EditIcon size='100%' />
           </button>
           <button

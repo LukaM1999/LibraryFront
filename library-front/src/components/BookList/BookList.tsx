@@ -3,7 +3,7 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { BiBookAdd as AddIcon } from 'react-icons/bi'
 import { useInView } from 'react-intersection-observer'
 import { toast } from 'react-toastify'
-import { useFilters, useJwt, useSearch, useSort } from '../../App'
+import { useFilters, useSearch, useSort } from '../../App'
 import { isAdmin, isLibrarian } from '../../services/AuthService'
 import { deleteBook, getBooksPaged, WhereBookQuery } from '../../services/BookService'
 import BookCard from '../BookCard/BookCard'
@@ -50,20 +50,25 @@ const BookList: FC<BookListProps> = () => {
   const { search } = useSearch()
   const { filters } = useFilters()
   const { sort } = useSort()
-  const { jwtToken } = useJwt()
   const [bookModalVisible, setBookModalVisible] = useState(false)
   const dialog = useRef<HTMLDialogElement>(null)
   const [selectedBook, setSelectedBook] = useState<Book | null>(null)
   const queryClient = useQueryClient()
-
-  const role = jwtToken?.role
 
   const showBookModal = () => {
     setBookModalVisible(true)
   }
 
   let { data, fetchNextPage } = useInfiniteQuery(
-    ['books'],
+    [
+      'books',
+      search,
+      filters.map((filter) => {
+        let { id, ...withoutId } = filter
+        return withoutId
+      }),
+      sort,
+    ],
     async ({ pageParam = 1 }) => {
       searchByTitle[0].Value = search
       const { data } = await getBooksPaged({
@@ -83,12 +88,6 @@ const BookList: FC<BookListProps> = () => {
       getNextPageParam: (lastPage) => lastPage?.nextPage,
     },
   )
-
-  useEffect(() => {
-    if (!data) return
-    data.pages = []
-    fetchNextPage({ pageParam: 1 })
-  }, [search, filters, sort])
 
   useEffect(() => {
     if (inView) {
@@ -136,7 +135,8 @@ const BookList: FC<BookListProps> = () => {
       <Dialog
         dialogRef={dialog}
         confirm={handleConfirmDelete}
-        title={`Are you sure you want to delete the book "${selectedBook?.Title}?"`}
+        title='Delete book'
+        description={`Are you sure you want to delete the book "${selectedBook?.Title}"?`}
         confirmText='Delete'
       />
 
@@ -152,7 +152,7 @@ const BookList: FC<BookListProps> = () => {
           )),
         )}
       </div>
-      {(isAdmin(role) || isLibrarian(role)) && (
+      {(isAdmin() || isLibrarian()) && (
         <button title='New book' onClick={showBookModal} className='btn-add-book'>
           <AddIcon size='100%' />
         </button>

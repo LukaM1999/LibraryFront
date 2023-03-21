@@ -1,6 +1,14 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClient } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import {
+  PersistedClient,
+  Persister,
+  PersistQueryClientProvider,
+} from '@tanstack/react-query-persist-client'
+import { del, get, set } from 'idb-keyval'
 import { useEffect, useState } from 'react'
 import { Outlet, useOutletContext } from 'react-router'
+import { ScrollRestoration } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import './App.css'
@@ -34,7 +42,35 @@ interface ContextSort {
   setSort: React.Dispatch<React.SetStateAction<string[]>>
 }
 
-const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 1000 * 60 * 5 } } })
+const cacheTime = 1000 * 60 * 5
+
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { cacheTime: cacheTime, staleTime: cacheTime } },
+})
+
+export const createIDBPersister = (idbValidKey: IDBValidKey = 'reactQuery'): Persister => {
+  return {
+    persistClient: async (client: PersistedClient) => {
+      const queries = client.clientState.queries.map((query) => {
+        return {
+          ...query,
+          state: {
+            ...query.state,
+            fetchMeta: null,
+          },
+        }
+      })
+      client.clientState.queries = queries
+      set(idbValidKey, client)
+    },
+    restoreClient: async () => {
+      return await get<PersistedClient>(idbValidKey)
+    },
+    removeClient: async () => {
+      await del(idbValidKey)
+    },
+  }
+}
 
 function App() {
   const [jwtToken, setJwtToken] = useState<Jwt | null>(null)
@@ -48,7 +84,11 @@ function App() {
   }, [])
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: createIDBPersister(), maxAge: cacheTime }}
+    >
+      <ScrollRestoration />
       <ToastContainer />
       <Header
         jwt={jwtToken}
@@ -66,7 +106,8 @@ function App() {
         />
       </div>
       <Footer />
-    </QueryClientProvider>
+      <ReactQueryDevtools initialIsOpen={false} position={'bottom-right'} />
+    </PersistQueryClientProvider>
   )
 }
 

@@ -70,6 +70,12 @@ const FilterForm: FC<FilterFormProps> = ({ bookFilters, setBookFilters }) => {
             onChange={handleFilterFieldChange}
             value={value}
             placeholder='Select fields to filter by...'
+            styles={{
+              menu: (baseStyles) => ({
+                ...baseStyles,
+                position: 'sticky',
+              }),
+            }}
           />
           <button
             type='button'

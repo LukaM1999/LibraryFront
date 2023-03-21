@@ -2,6 +2,8 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { HiUserAdd as AddAuthorIcon } from 'react-icons/hi'
 import { MdHideImage as RemoveImageIcon } from 'react-icons/md'
 import Select from 'react-select'
+import { toast } from 'react-toastify'
+import bookCoverPlaceholder from '../../assets/book-cover-placeholder.png'
 import { Author, Book } from '../BookList/BookList'
 import './BookForm.css'
 
@@ -18,6 +20,8 @@ interface AuthorOption {
   label: string
   value: number
 }
+
+const maxImageSize = 5 * 1024 * 1024
 
 const BookForm: FC<BookFormProps> = ({
   book = null,
@@ -91,7 +95,18 @@ const BookForm: FC<BookFormProps> = ({
     if (!currentTarget.files) return
     const files = currentTarget.files
     const reader = new FileReader()
-    if (!files) return
+    if (!files || files.length === 0) return
+
+    if (!files[0]?.type.match(/^image\//)) {
+      toast.warn('Please select an image file')
+      return
+    }
+
+    if (files[0]?.size > maxImageSize) {
+      toast.warn('Selected image must be less than 5MB in size')
+      return
+    }
+
     reader.readAsDataURL(files[0])
     setBookFormData((prev) => {
       if (!prev) return null
@@ -122,7 +137,7 @@ const BookForm: FC<BookFormProps> = ({
           <img
             onClick={handleCoverClick}
             className='book-cover'
-            src={coverImage ? coverImage : './book-cover-placeholder.png'}
+            src={coverImage ? coverImage : bookCoverPlaceholder}
             alt='Book Cover'
             title='Click to change cover'
           />
@@ -141,6 +156,7 @@ const BookForm: FC<BookFormProps> = ({
           type='file'
           id='file'
           name='file'
+          accept='image/png, image/jpeg, image/jpg, image/gif, image/bmp'
           ref={hiddenFileInput}
           onChange={handleFileChange}
           style={{ display: 'none' }}
@@ -204,6 +220,12 @@ const BookForm: FC<BookFormProps> = ({
             value={authors}
             isClearable={false}
             placeholder='Select authors...'
+            styles={{
+              menu: (baseStyles) => ({
+                ...baseStyles,
+                position: 'sticky',
+              }),
+            }}
             menuPlacement='auto'
             onChange={(selectedOptions) => handleAuthorsChange([...selectedOptions])}
           />

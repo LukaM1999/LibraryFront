@@ -28,9 +28,8 @@
 
 @media only screen and (min-width: 769px) {
   .book-list {
-    justify-content: flex-start;
+    justify-content: center;
     gap: 2em;
-    padding: 8em;
   }
 
   .btn-add-book {

@@ -28,6 +28,7 @@
   opacity: 1;
   background: transparent;
   border: 0;
+  color: #000;
 }
 
 .dialog::backdrop {
@@ -81,7 +82,7 @@
   position: sticky;
   display: flex;
   justify-content: flex-end;
-  align-items: top;
+  align-items: center;
   top: 0px;
   left: 0px;
   height: 60px;
@@ -90,7 +91,12 @@
   box-shadow: 0px 1px 10px 1px hsl(0deg 0% 70%);
 }
 
-.dialog-close-button {
+.dialog .dialog-header h3 {
+  flex: 1;
+  text-align: center;
+}
+
+.dialog .dialog-close-button {
   position: relative;
   right: 5px;
   background-color: transparent;
@@ -100,10 +106,12 @@
   font-weight: bold;
   color: #666;
   outline: none;
+  width: auto;
 }
 
-.dialog-close-button:hover {
+.book-details .dialog .dialog-close-button:hover {
   color: #000;
+  background-color: transparent;
 }
 
 .confirm-form {
@@ -127,8 +135,8 @@
   margin-top: 20px;
 }
 
-.confirm-form-ok-btn,
-.confirm-form-cancel-btn {
+.dialog .confirm-form-ok-btn,
+.dialog .confirm-form-cancel-btn {
   border-radius: 0.5em;
   width: 7rem;
   height: 2rem;
@@ -139,19 +147,20 @@
   text-transform: uppercase;
 }
 
-.confirm-form-ok-btn {
+.dialog .confirm-form-ok-btn {
   background-color: #45b398;
 }
 
-.confirm-form-cancel-btn {
+.dialog .confirm-form-cancel-btn {
   background-color: transparent;
   color: #972527;
 }
 
-.confirm-form-ok-btn:hover {
+.dialog .confirm-form-ok-btn:hover {
   background-color: #41c8aa;
 }
 
-.confirm-form-cancel-btn:hover {
+.book-details .dialog .confirm-form-cancel-btn:hover {
   color: #aa2723;
+  background-color: transparent;
 }

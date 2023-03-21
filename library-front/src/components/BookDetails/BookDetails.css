@@ -1,0 +1,129 @@
+.book-details {
+  width: 100%;
+  padding: 20px;
+}
+
+.book-details .book-cover {
+  cursor: auto;
+  width: 100%;
+  margin-top: 80px;
+}
+
+.book-cover > img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 5px;
+  box-shadow: 0px 5px 10px 10px rgba(0, 0, 0, 0.3);
+}
+
+.book-info {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 100px;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+p {
+  margin-block: 0;
+}
+
+.book-info-row:nth-of-type(1) {
+  margin-top: 20px;
+}
+
+.book-info-row > label {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-block: 0;
+}
+
+.book-info-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 10px;
+  gap: 0px;
+}
+
+.book-details button {
+  border-radius: 0.5em;
+  width: 40px;
+  height: 40px;
+  background-color: #45b398;
+  border: 0;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.book-details button {
+  width: 7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.book-details button:not([disabled]):hover {
+  background-color: #41c8aa;
+}
+
+.book-details button[disabled] {
+  background-color: #b3b3b3;
+  cursor: not-allowed;
+}
+
+.book-details .delete-book-btn {
+  background-color: transparent;
+  border: white 2px solid;
+}
+
+.book-details .delete-book-btn:not([disabled]):hover {
+  background-color: #aa2723;
+}
+
+.book-info-column {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 10px;
+  gap: 10px;
+}
+
+@media only screen and (min-width: 769px) {
+  .book-details {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    padding: 0 2em;
+    margin: 0;
+  }
+
+  .book-cover > img {
+    width: unset;
+    max-width: 80%;
+  }
+
+  .book-details .book-cover {
+    display: flex;
+    justify-content: center;
+    flex: 0.5;
+    margin: 0;
+    padding-top: 100px;
+  }
+
+  h1 {
+    margin-block-start: 0;
+  }
+
+  .book-info {
+    flex: 0.5;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    padding-top: 100px;
+  }
+}

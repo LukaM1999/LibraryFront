@@ -74,6 +74,7 @@
 
   .modal-content::-webkit-scrollbar-track {
     background: #f1f1f1;
+    border-radius: 2em;
   }
 
   .modal-content::-webkit-scrollbar-thumb {
@@ -86,7 +87,7 @@
   position: sticky;
   display: flex;
   justify-content: flex-end;
-  align-items: top;
+  align-items: center;
   top: 0px;
   left: 0px;
   height: 60px;

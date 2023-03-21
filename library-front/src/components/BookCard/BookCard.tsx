@@ -1,10 +1,10 @@
 import { FC } from 'react'
 import { AiOutlineEdit as EditIcon } from 'react-icons/ai'
 import { MdDeleteForever as DeleteIcon } from 'react-icons/md'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { useJwt } from '../../App'
+import bookCoverPlaceholder from '../../assets/book-cover-placeholder.png'
 import { isAdmin, isLibrarian } from '../../services/AuthService'
-import { getBook } from '../../services/BookService'
 import { Book } from '../BookList/BookList'
 import './BookCard.css'
 
@@ -15,17 +15,10 @@ interface BookCardProps {
 }
 
 const BookCard: FC<BookCardProps> = ({ book, handleDelete, handleEdit }) => {
-  const { jwtToken } = useJwt()
-
-  const role = jwtToken?.role
+  const navigate = useNavigate()
 
   const handleBookDelete = async () => {
-    const { data } = await getBook(book.Id).catch((err) => {
-      toast.error("Couldn't retrieve book")
-      throw new Error(err)
-    })
-    if (!data) return
-    if (data.Quantity !== data.Available) {
+    if (book.Available === 0) {
       toast.warning("Book is currently being rented and can't be deleted")
       return
     }
@@ -34,7 +27,7 @@ const BookCard: FC<BookCardProps> = ({ book, handleDelete, handleEdit }) => {
 
   return (
     <div className='book-card'>
-      {(isAdmin(role) || isLibrarian(role)) && (
+      {(isAdmin() || isLibrarian()) && (
         <div className='book-card-actions'>
           <button onClick={() => handleEdit(book)} title='Edit book' className='book-card-btn'>
             <EditIcon size='100%' />
@@ -48,11 +41,11 @@ const BookCard: FC<BookCardProps> = ({ book, handleDelete, handleEdit }) => {
           </button>
         </div>
       )}
-      <div className='book-card-header'>
+      <div onClick={() => navigate(`/book-details/${book.Id}`)} className='book-card-header'>
         <img
           title={book.Title}
           alt={book.Title}
-          src={book.Cover ? `data:image/png;base64,${book.Cover}` : './book-cover-placeholder.png'}
+          src={book.Cover ? `data:image/png;base64,${book.Cover}` : bookCoverPlaceholder}
         ></img>
       </div>
       <div className='book-card-body'>

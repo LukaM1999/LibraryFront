@@ -63,12 +63,12 @@
 
 .book-cover {
   cursor: pointer;
-  width: 40%;
-  height: 40%;
+  width: 100%;
   object-fit: cover;
 }
 
 .book-cover-container {
   position: relative;
   z-index: 1;
+  width: 70%;
 }

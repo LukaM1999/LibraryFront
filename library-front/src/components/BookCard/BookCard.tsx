@@ -3,7 +3,6 @@ import { AiOutlineEdit as EditIcon } from 'react-icons/ai'
 import { MdDeleteForever as DeleteIcon } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { useJwt } from '../../App'
 import bookCoverPlaceholder from '../../assets/book-cover-placeholder.png'
 import { isAdmin, isLibrarian } from '../../services/AuthService'
 import { Book } from '../BookList/BookList'
@@ -16,10 +15,7 @@ interface BookCardProps {
 }
 
 const BookCard: FC<BookCardProps> = ({ book, handleDelete, handleEdit }) => {
-  const { jwtToken } = useJwt()
   const navigate = useNavigate()
-
-  const role = jwtToken?.role
 
   const handleBookDelete = async () => {
     if (book.Available === 0) {
@@ -31,7 +27,7 @@ const BookCard: FC<BookCardProps> = ({ book, handleDelete, handleEdit }) => {
 
   return (
     <div className='book-card'>
-      {(isAdmin(role) || isLibrarian(role)) && (
+      {(isAdmin() || isLibrarian()) && (
         <div className='book-card-actions'>
           <button onClick={() => handleEdit(book)} title='Edit book' className='book-card-btn'>
             <EditIcon size='100%' />

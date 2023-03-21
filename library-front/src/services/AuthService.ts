@@ -16,11 +16,20 @@ export const refreshAccessToken = async (): Promise<AxiosResponse<RefreshTokenRe
   })
 }
 
-export const isUser = (role: string) => role === 'User'
+export const isUser = () => {
+  const jwt = JSON.parse(getItem('jwt') || '{}')
+  return jwt.role === 'User'
+}
 
-export const isAdmin = (role: string) => role === 'Admin'
+export const isAdmin = () => {
+  const jwt = JSON.parse(getItem('jwt') || '{}')
+  return jwt.role === 'Admin'
+}
 
-export const isLibrarian = (role: string) => role === 'Librarian'
+export const isLibrarian = () => {
+  const jwt = JSON.parse(getItem('jwt') || '{}')
+  return jwt.role === 'Librarian'
+}
 
 export interface LoginRequest {
   Email: string

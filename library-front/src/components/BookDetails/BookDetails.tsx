@@ -2,9 +2,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { FC, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { useJwt } from '../../App'
 import bookCoverPlaceholder from '../../assets/book-cover-placeholder.png'
-import { isAdmin, isLibrarian } from '../../services/AuthService'
+import { isAdmin, isLibrarian, isUser } from '../../services/AuthService'
 import { deleteBook, getBook, GetBookAuthorsResponse } from '../../services/BookService'
 import {
   getBookRentalHistory,
@@ -22,7 +21,6 @@ interface BookDetailsProps {}
 const BookDetails: FC<BookDetailsProps> = () => {
   const { id } = useParams<{ id: string }>()
   const [book, setBook] = useState<Book | null>(null)
-  const { jwtToken } = useJwt()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const dialog = useRef<HTMLDialogElement | null>(null)
   const queryClient = useQueryClient()
@@ -39,8 +37,6 @@ const BookDetails: FC<BookDetailsProps> = () => {
     return data
   })
   const [selectedRentalId, setSelectedRentalId] = useState<number | null>(null)
-
-  const role = jwtToken?.role
 
   useEffect(() => {
     if (!bookData) return
@@ -212,12 +208,12 @@ const BookDetails: FC<BookDetailsProps> = () => {
             </p>
           </div>
           <div className='book-info-column'>
-            {role && role !== 'Librarian' && (
+            {(isAdmin() || isUser()) && (
               <button onClick={openRentDialog} disabled={book.Available === 0} type='button'>
                 Rent
               </button>
             )}
-            {(isAdmin(role) || isLibrarian(role)) && (
+            {(isAdmin() || isLibrarian()) && (
               <>
                 <button type='button' onClick={() => setIsModalVisible(true)}>
                   Edit

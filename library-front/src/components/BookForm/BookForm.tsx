@@ -21,6 +21,8 @@ interface AuthorOption {
   value: number
 }
 
+const maxImageSize = 5 * 1024 * 1024
+
 const BookForm: FC<BookFormProps> = ({
   book = null,
   allAuthors,
@@ -100,7 +102,7 @@ const BookForm: FC<BookFormProps> = ({
       return
     }
 
-    if (files[0]?.size > 5 * 1024 * 1024) {
+    if (files[0]?.size > maxImageSize) {
       toast.warn('Selected image must be less than 5MB in size')
       return
     }

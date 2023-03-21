@@ -3,7 +3,7 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { BiBookAdd as AddIcon } from 'react-icons/bi'
 import { useInView } from 'react-intersection-observer'
 import { toast } from 'react-toastify'
-import { useFilters, useJwt, useSearch, useSort } from '../../App'
+import { useFilters, useSearch, useSort } from '../../App'
 import { isAdmin, isLibrarian } from '../../services/AuthService'
 import { deleteBook, getBooksPaged, WhereBookQuery } from '../../services/BookService'
 import BookCard from '../BookCard/BookCard'
@@ -50,13 +50,10 @@ const BookList: FC<BookListProps> = () => {
   const { search } = useSearch()
   const { filters } = useFilters()
   const { sort } = useSort()
-  const { jwtToken } = useJwt()
   const [bookModalVisible, setBookModalVisible] = useState(false)
   const dialog = useRef<HTMLDialogElement>(null)
   const [selectedBook, setSelectedBook] = useState<Book | null>(null)
   const queryClient = useQueryClient()
-
-  const role = jwtToken?.role
 
   const showBookModal = () => {
     setBookModalVisible(true)
@@ -155,7 +152,7 @@ const BookList: FC<BookListProps> = () => {
           )),
         )}
       </div>
-      {(isAdmin(role) || isLibrarian(role)) && (
+      {(isAdmin() || isLibrarian()) && (
         <button title='New book' onClick={showBookModal} className='btn-add-book'>
           <AddIcon size='100%' />
         </button>

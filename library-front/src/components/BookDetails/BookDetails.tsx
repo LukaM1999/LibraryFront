@@ -18,6 +18,12 @@ import './BookDetails.css'
 
 interface BookDetailsProps {}
 
+enum BookDetailsDialogType {
+  Delete = 'delete',
+  Rent = 'rent',
+  Return = 'return',
+}
+
 const BookDetails: FC<BookDetailsProps> = () => {
   const { id } = useParams<{ id: string }>()
   const [book, setBook] = useState<Book | null>(null)
@@ -25,7 +31,9 @@ const BookDetails: FC<BookDetailsProps> = () => {
   const dialog = useRef<HTMLDialogElement | null>(null)
   const queryClient = useQueryClient()
   const navigate = useNavigate()
-  const [activeDialog, setActiveDialog] = useState<'delete' | 'rent' | 'return'>('delete')
+  const [activeDialog, setActiveDialog] = useState<BookDetailsDialogType>(
+    BookDetailsDialogType.Delete,
+  )
   const { data: bookData } = useQuery(['books', id], async () => {
     if (!id) return null
     const { data } = await getBook(parseInt(id))
@@ -59,18 +67,18 @@ const BookDetails: FC<BookDetailsProps> = () => {
   const handleDialogConfirm = () => {
     switch (activeDialog) {
       case 'delete':
-        handleConfirmDelete()
+        handleConfirmDeleteBook()
         break
       case 'rent':
-        handleConfirmRent()
+        handleConfirmRentBook()
         break
       case 'return':
-        handleConfirmReturn()
+        handleConfirmReturnBook()
         break
     }
   }
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDeleteBook = async () => {
     if (book.Quantity !== book.Available) {
       toast.warning("Book is currently being rented and can't be deleted")
       return
@@ -80,28 +88,22 @@ const BookDetails: FC<BookDetailsProps> = () => {
       toast.error("Couldn't delete book")
       throw new Error(err)
     })
+
     queryClient.invalidateQueries({
-      queryKey: ['books'],
+      predicate(query) {
+        return query.queryKey[0] === 'books' && query.queryKey[1] !== id
+      },
       refetchPage: (lastPage: BookPage) =>
         lastPage.books.some((deletedBook) => book.Id === deletedBook.Id),
     })
+
     toast.success('Book deleted successfully')
     navigate('/')
   }
 
-  const openDeleteDialog = () => {
-    setActiveDialog('delete')
-    dialog.current?.showModal()
-  }
-
-  const openRentDialog = () => {
-    setActiveDialog('rent')
-    dialog.current?.showModal()
-  }
-
-  const openReturnDialog = (rentId: number) => {
-    setSelectedRentalId(rentId)
-    setActiveDialog('return')
+  const openDialog = (dialogType: BookDetailsDialogType, rentalId?: number) => {
+    if (rentalId) setSelectedRentalId(rentalId)
+    setActiveDialog(dialogType)
     dialog.current?.showModal()
   }
 
@@ -117,35 +119,50 @@ const BookDetails: FC<BookDetailsProps> = () => {
     return `${activeDialog[0].toUpperCase()}${activeDialog.slice(1)}`
   }
 
-  const handleConfirmRent = async () => {
+  const handleConfirmRentBook = async () => {
     await rentBook(book.Id).catch((err) => {
       toast.error("Couldn't rent book")
       throw new Error(err)
     })
 
-    queryClient.invalidateQueries({
-      queryKey: ['books', id],
-    })
+    invalidateQueries()
 
     toast.success('Book rented successfully!')
   }
 
-  const handleConfirmReturn = async () => {
+  const handleConfirmReturnBook = async () => {
     if (!selectedRentalId) throw new Error('No rental selected')
+
     await returnBook(selectedRentalId).catch((err) => {
       toast.error("Couldn't return book")
       throw new Error(err)
     })
 
+    invalidateQueries()
+
+    toast.success('Book returned successfully!')
+  }
+
+  const invalidateQueries = () => {
     queryClient.invalidateQueries({
       queryKey: ['books', id],
     })
 
     queryClient.invalidateQueries({
-      queryKey: ['rentHistory', 'book', id],
+      predicate(query) {
+        return query.queryKey[0] === 'books' && query.queryKey.length === 4
+      },
+      refetchPage(lastPage: BookPage) {
+        return lastPage.books.some((pagedBook) => {
+          return book.Id === pagedBook.Id
+        })
+      },
+      refetchType: 'inactive',
     })
 
-    toast.success('Book returned successfully!')
+    queryClient.invalidateQueries({
+      queryKey: ['rentHistory', 'book', id],
+    })
   }
 
   return (
@@ -209,7 +226,11 @@ const BookDetails: FC<BookDetailsProps> = () => {
           </div>
           <div className='book-info-column'>
             {(isAdmin() || isUser()) && (
-              <button onClick={openRentDialog} disabled={book.Available === 0} type='button'>
+              <button
+                onClick={() => openDialog(BookDetailsDialogType.Rent)}
+                disabled={book.Available === 0}
+                type='button'
+              >
                 Rent
               </button>
             )}
@@ -218,7 +239,11 @@ const BookDetails: FC<BookDetailsProps> = () => {
                 <button type='button' onClick={() => setIsModalVisible(true)}>
                   Edit
                 </button>
-                <button type='button' onClick={openDeleteDialog} className='delete-book-btn'>
+                <button
+                  type='button'
+                  onClick={() => openDialog(BookDetailsDialogType.Delete)}
+                  className='delete-book-btn'
+                >
                   Delete
                 </button>
               </>
@@ -247,7 +272,10 @@ const BookDetails: FC<BookDetailsProps> = () => {
                   {rentHistory.IsReturned
                     ? 'Returned'
                     : (isAdmin() || isLibrarian()) && (
-                        <button type='button' onClick={() => openReturnDialog(rentHistory.Id)}>
+                        <button
+                          type='button'
+                          onClick={() => openDialog(BookDetailsDialogType.Return, rentHistory.Id)}
+                        >
                           Return
                         </button>
                       )}

@@ -79,7 +79,7 @@ const BookList: FC<BookListProps> = () => {
       const bookPage: BookPage = {
         books: data.Items,
         prevPage: pageParam === 1 ? 1 : pageParam - 1,
-        nextPage: data.TotalCount - pageParam * 10 > 0 ? ++pageParam : undefined,
+        nextPage: data.TotalCount - pageParam * 12 > 0 ? ++pageParam : undefined,
       }
       return bookPage
     },
@@ -111,11 +111,19 @@ const BookList: FC<BookListProps> = () => {
       toast.error("Couldn't delete book")
       throw new Error(err)
     })
+
     queryClient.invalidateQueries({
-      queryKey: ['books'],
+      predicate(query) {
+        return query.queryKey[0] === 'books' && query.queryKey.length === 4
+      },
       refetchPage: (lastPage: BookPage) =>
         lastPage.books.some((deletedBook) => selectedBook.Id === deletedBook.Id),
     })
+
+    queryClient.invalidateQueries({
+      queryKey: ['book', selectedBook.Id.toString()],
+    })
+
     toast.success('Book deleted successfully')
     setSelectedBook(null)
   }

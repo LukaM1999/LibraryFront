@@ -65,9 +65,15 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal })
     })
 
     queryClient.invalidateQueries({
-      queryKey: ['books'],
+      predicate(query) {
+        return query.queryKey[0] === 'books' && query.queryKey.length === 4
+      },
       refetchPage: (lastPage: BookPage) =>
         lastPage.books.some((oldBook) => oldBook.Id === book?.Id),
+    })
+
+    queryClient.invalidateQueries({
+      queryKey: ['books', book?.Id.toString()],
     })
 
     closeModal()
@@ -82,7 +88,9 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal })
     })
 
     queryClient.invalidateQueries({
-      queryKey: ['books'],
+      predicate(query) {
+        return query.queryKey[0] === 'books' && query.queryKey.length === 4
+      },
       refetchPage: (lastPage: BookPage) => !lastPage.nextPage,
     })
 

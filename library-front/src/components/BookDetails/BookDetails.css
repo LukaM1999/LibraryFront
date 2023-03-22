@@ -19,7 +19,6 @@
 .book-info {
   display: flex;
   flex-direction: column;
-  padding-bottom: 100px;
   text-align: center;
   font-size: 1.2rem;
 }
@@ -49,7 +48,8 @@ p {
   gap: 0px;
 }
 
-.book-details button {
+.book-details button,
+.book-rent-history button {
   border-radius: 0.5em;
   width: 40px;
   height: 40px;
@@ -59,13 +59,15 @@ p {
   transition: all 0.2s ease-in-out;
 }
 
-.book-details button {
+.book-details button,
+.book-rent-history button {
   width: 7rem;
   font-weight: bold;
   text-transform: uppercase;
 }
 
-.book-details button:not([disabled]):hover {
+.book-details button:not([disabled]):hover,
+.book-rent-history button:not([disabled]):hover {
   background-color: #41c8aa;
 }
 
@@ -125,5 +127,108 @@ p {
     margin-bottom: 0;
     padding-bottom: 0;
     padding-top: 100px;
+  }
+}
+
+.book-rent-history {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 20px;
+  padding-top: 0;
+  padding-bottom: 100px;
+  text-align: center;
+}
+
+@media only screen and (min-width: 769px) {
+  .book-rent-history {
+    padding: 2em 2em;
+  }
+}
+
+table {
+  color: black;
+  border: 0;
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+table th {
+  font-size: 0.85em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+table thead {
+  border: none;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+table tr {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-bottom: 3px solid #ddd;
+  display: block;
+  margin-bottom: 0.625em;
+  padding: 0.35em;
+}
+
+table td {
+  border-bottom: 1px solid #ddd;
+  display: block;
+  font-size: 0.8em;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+table td::before {
+  content: attr(data-label);
+  float: left;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-right: 0.625em;
+}
+
+table td:last-child {
+  border-bottom: 0;
+}
+
+table th,
+table td {
+  padding: 0.625em;
+}
+
+@media screen and (min-width: 769px) {
+  table {
+    border: 1px solid #ccc;
+  }
+
+  table tr {
+    display: table-row;
+  }
+
+  table thead {
+    position: relative;
+  }
+
+  table th,
+  table td {
+    text-align: center;
+  }
+
+  table td {
+    display: table-cell;
+  }
+
+  table td::before {
+    content: none;
   }
 }

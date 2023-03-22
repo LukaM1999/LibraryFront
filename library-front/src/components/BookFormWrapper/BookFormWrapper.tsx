@@ -26,8 +26,8 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal })
     if (!isAdmin() || !isLibrarian()) return
     getAllAuthors()
       .then(({ data }) => setAuthors(data))
-      .catch(() => {
-        console.log('Error fetching authors')
+      .catch((error) => {
+        throw new Error(error)
       })
   }, [])
 

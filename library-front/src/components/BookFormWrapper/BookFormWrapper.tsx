@@ -23,7 +23,7 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal })
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    if (!isAdmin() || !isLibrarian()) return
+    if (!isAdmin() && !isLibrarian()) return
     getAllAuthors()
       .then(({ data }) => setAuthors(data))
       .catch((error) => {
@@ -83,6 +83,7 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal })
     })
 
     setIsLoading(false)
+    setBookFormData(null)
     closeModal()
     toast.success('Book updated successfully!')
   }
@@ -105,6 +106,7 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal })
     })
 
     setIsLoading(false)
+    setBookFormData(null)
     closeModal()
     toast.success('Book created successfully!')
   }

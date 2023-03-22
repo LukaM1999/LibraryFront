@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 import App from '../App'
 import BookDetails from '../components/BookDetails/BookDetails'
 import LoginForm from '../components/LoginForm/LoginForm'
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/book-details/:id',
-        element: isLoggedIn() ? <BookDetails /> : <LoginForm />,
+        element: isLoggedIn() ? <BookDetails /> : <Navigate to='/login' replace={true} />,
       },
     ],
   },

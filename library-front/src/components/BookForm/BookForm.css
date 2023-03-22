@@ -1,7 +1,19 @@
 .book-form {
   color: black;
-  padding: 2em;
+  padding: 1em;
   overflow-y: visible;
+}
+
+.book-form input {
+  width: 100%;
+  padding: 0.5em;
+  border: 1px solid #ddd;
+  border-radius: 0.25em;
+  font-size: 1rem;
+}
+
+.book-form textarea {
+  padding: 0.5em;
 }
 
 .book-form label {
@@ -11,14 +23,24 @@
 
 .book-form-row {
   display: flex;
-  gap: 10px;
+  gap: 5px;
   align-items: center;
   flex-direction: column;
 }
 
-.book-form-row > * {
+.book-form-row > label {
   width: 100%;
   text-align: center;
+}
+
+.book-form-row > input,
+.book-form-row > textarea {
+  width: 100%;
+  text-align: left;
+}
+
+.book-form textarea {
+  font-size: 1rem;
 }
 
 .book-form-row.author-form {
@@ -27,7 +49,7 @@
 }
 
 .book-form-row + .book-form-row {
-  margin-top: 0.5em;
+  margin-top: 1em;
 }
 
 .book-form-column {
@@ -81,4 +103,9 @@
   position: relative;
   z-index: 1;
   width: 70%;
+}
+
+.book-form .spinner-container {
+  display: block;
+  width: 100%;
 }

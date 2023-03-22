@@ -16,6 +16,11 @@ export const refreshAccessToken = async (): Promise<AxiosResponse<RefreshTokenRe
   })
 }
 
+export const isLoggedIn = () => {
+  const jwt = JSON.parse(getItem('jwt') || '{}')
+  return jwt.accessToken && jwt.refreshToken
+}
+
 export const isUser = () => {
   const jwt = JSON.parse(getItem('jwt') || '{}')
   return jwt.role === 'User'

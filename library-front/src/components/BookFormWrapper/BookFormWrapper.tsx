@@ -3,6 +3,7 @@ import { FC, FormEvent, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import convertBase64ToBlob from '../../helpers/image-helper'
 import { createAuthor, getAllAuthors } from '../../services/AuthorService'
+import { isAdmin, isLibrarian } from '../../services/AuthService'
 import { createBook, updateBook } from '../../services/BookService'
 import BookForm from '../BookForm/BookForm'
 import { Author, Book, BookPage } from '../BookList/BookList'
@@ -18,13 +19,15 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal })
   const [bookFormData, setBookFormData] = useState<FormData | null>(new FormData())
   const [authors, setAuthors] = useState<Author[]>([])
   const [authorFormData, setAuthorFormData] = useState<Author | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const queryClient = useQueryClient()
 
   useEffect(() => {
+    if (!isAdmin() || !isLibrarian()) return
     getAllAuthors()
       .then(({ data }) => setAuthors(data))
       .catch(() => {
-        toast.error('Error getting authors')
+        console.log('Error fetching authors')
       })
   }, [])
 
@@ -59,8 +62,11 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal })
 
   const updateSelectedBook = async () => {
     if (!bookFormData) return
+
+    setIsLoading(true)
     await updateBook(bookFormData).catch((error) => {
       toast.error('Error updating book')
+      setIsLoading(false)
       throw new Error(error)
     })
 
@@ -76,14 +82,18 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal })
       queryKey: ['books', book?.Id.toString()],
     })
 
+    setIsLoading(false)
     closeModal()
     toast.success('Book updated successfully!')
   }
 
   const createNewBook = async () => {
     if (!bookFormData) return
+
+    setIsLoading(true)
     await createBook(bookFormData).catch((error) => {
       toast.error('Error creating book')
+      setIsLoading(false)
       throw new Error(error)
     })
 
@@ -94,23 +104,31 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal })
       refetchPage: (lastPage: BookPage) => !lastPage.nextPage,
     })
 
+    setIsLoading(false)
     closeModal()
     toast.success('Book created successfully!')
   }
 
   const handleCreateNewAuthor = async () => {
     if (!authorFormData) return
+
+    setIsLoading(true)
     await createAuthor(authorFormData).catch((error) => {
       toast.error('Error creating author')
+      setIsLoading(false)
       throw new Error(error)
     })
+
     toast.success('Author created successfully!')
     setAuthorFormData(null)
 
     const { data } = await getAllAuthors().catch((error) => {
       toast.error('Error getting authors')
+      setIsLoading(false)
       throw new Error(error)
     })
+
+    setIsLoading(false)
     setAuthors(data)
   }
 
@@ -118,6 +136,7 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal })
     <>
       <Modal
         closeModal={closeModal}
+        isLoading={isLoading}
         confirm={handleConfirm}
         isOpen={isOpen}
         title={book ? 'Edit book' : 'Create book'}
@@ -129,6 +148,7 @@ const BookFormWrapper: FC<BookFormWrapperProps> = ({ book, isOpen, closeModal })
           authorData={authorFormData}
           setAuthorData={setAuthorFormData}
           createNewAuthor={handleCreateNewAuthor}
+          isLoading={isLoading}
         />
       </Modal>
     </>

@@ -9,6 +9,7 @@ import { deleteBook, getBooksPaged, WhereBookQuery } from '../../services/BookSe
 import BookCard from '../BookCard/BookCard'
 import BookFormWrapper from '../BookFormWrapper/BookFormWrapper'
 import Dialog from '../Dialog/Dialog'
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner'
 import './BookList.css'
 
 interface BookListProps {}
@@ -59,7 +60,7 @@ const BookList: FC<BookListProps> = () => {
     setBookModalVisible(true)
   }
 
-  let { data, fetchNextPage } = useInfiniteQuery(
+  const { data, fetchNextPage, isLoading, isFetching } = useInfiniteQuery(
     [
       'books',
       search,
@@ -165,7 +166,9 @@ const BookList: FC<BookListProps> = () => {
           <AddIcon size='100%' />
         </button>
       )}
-      <div ref={ref} />
+      <div className='loading-spinner-container' ref={ref}>
+        {(isLoading || isFetching) && <LoadingSpinner />}
+      </div>
     </>
   )
 }

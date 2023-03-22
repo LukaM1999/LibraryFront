@@ -5,6 +5,7 @@ import { useJwt } from '../../App'
 import { Jwt, JwtRole, roleKey, setJwt } from '../../helpers/jwt-helper'
 import router from '../../router/router'
 import { login, LoginRequest } from '../../services/AuthService'
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner'
 import './LoginForm.css'
 
 interface LoginProps {}
@@ -13,6 +14,7 @@ const LoginForm: FC<LoginProps> = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const { setJwtToken } = useJwt()
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -21,6 +23,7 @@ const LoginForm: FC<LoginProps> = () => {
       Password: password,
     }
     try {
+      setIsLoading(true)
       const { data } = await login(loginRequest)
       if (!data) return
       const role: JwtRole = jwtDecode(data.AccessToken)
@@ -33,9 +36,11 @@ const LoginForm: FC<LoginProps> = () => {
       updateJwt(token)
     } catch (error: any) {
       toast.error('Email or password incorrect')
+      setIsLoading(false)
       throw new Error(error)
     }
     toast.success('Successfully logged in!')
+    setIsLoading(false)
     router.navigate('/')
   }
 
@@ -54,6 +59,7 @@ const LoginForm: FC<LoginProps> = () => {
         type='email'
         id='email'
         value={email}
+        disabled={isLoading}
         onChange={(e) => setEmail(e.target.value)}
         required
         className='login-form-input'
@@ -67,6 +73,7 @@ const LoginForm: FC<LoginProps> = () => {
         type='password'
         id='password'
         value={password}
+        disabled={isLoading}
         onChange={(e) => setPassword(e.target.value)}
         required
         className='login-form-input'
@@ -75,7 +82,7 @@ const LoginForm: FC<LoginProps> = () => {
       <br />
       <footer className='login-form-footer'>
         <button type='submit' className='login-form-submit-button'>
-          Login
+          {isLoading ? <LoadingSpinner /> : 'Login'}
         </button>
       </footer>
     </form>

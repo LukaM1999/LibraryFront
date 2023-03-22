@@ -43,6 +43,7 @@
   cursor: pointer;
   width: 7rem;
   transition: all 0.2s ease-in-out;
+  text-transform: uppercase;
 }
 
 .login-form-submit-button:hover {
@@ -54,4 +55,16 @@
   flex-direction: row;
   align-items: center;
   padding: 1rem;
+}
+
+.login-form .loading-spinner {
+  width: 25px;
+  height: 25px;
+  border: 0.5em solid #f3f3f3;
+  border-top: 0.5em solid #383636;
+}
+
+.login-form .spinner-container {
+  display: flex;
+  justify-content: center;
 }

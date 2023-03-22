@@ -1,7 +1,7 @@
 import { FC, FormEvent, useEffect, useState } from 'react'
 import { BiSort as SortIcon } from 'react-icons/bi'
 import { TbFilter as FilterIcon } from 'react-icons/tb'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { clearJwt, Jwt } from '../../helpers/jwt-helper'
 import BookSearch from '../BookSearch/BookSearch'
 import FilterForm, { BookFilter } from '../FilterForm/FilterForm'
@@ -26,6 +26,7 @@ const Header: FC<HeaderProps> = ({ jwt, setJwt, setSearch, setFilters, setSort }
   const [activeModal, setActiveModal] = useState<'filter' | 'sort'>('filter')
   const [bookFilters, setBookFilters] = useState<BookFilter[]>([])
   const [bookSort, setBookSort] = useState<string[]>([])
+  const location = useLocation()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,6 +81,7 @@ const Header: FC<HeaderProps> = ({ jwt, setJwt, setSearch, setFilters, setSort }
   return (
     <nav className={`header ${!isHeaderVisible ? 'hidden' : ''}`}>
       <Modal
+        isLoading={false}
         closeModal={handleCloseModal}
         isOpen={isModalVisible}
         title={activeModal === 'filter' ? 'Filter books' : 'Sort books'}
@@ -94,7 +96,7 @@ const Header: FC<HeaderProps> = ({ jwt, setJwt, setSearch, setFilters, setSort }
 
       <div className='header-left'></div>
       <div className='header-center'>
-        {jwt?.accessToken ? (
+        {jwt?.accessToken && location.pathname === '/' && (
           <>
             <BookSearch handleSearch={handleSearch} />
             <button title='Filter books' onClick={showFilterModal} className='filter-button'>
@@ -104,18 +106,13 @@ const Header: FC<HeaderProps> = ({ jwt, setJwt, setSearch, setFilters, setSort }
               <SortIcon size='100%' />
             </button>
           </>
-        ) : null}
+        )}
       </div>
       <div className='header-right'>
         {!jwt?.accessToken ? (
-          <>
-            <Link to='/login' className='header-button'>
-              Login
-            </Link>
-            <Link to='/register' className='header-button register'>
-              Register
-            </Link>
-          </>
+          <Link to='/login' className='header-button'>
+            Login
+          </Link>
         ) : (
           <Link to='/' onClick={handleLogout} className='header-button'>
             Logout

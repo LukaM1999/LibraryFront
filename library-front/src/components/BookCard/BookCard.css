@@ -81,6 +81,7 @@
 .book-card-body-group > * {
   margin: 0;
   padding: 0;
+  overflow-wrap: break-word;
 }
 
 .book-card-body-group + .book-card-body-group {

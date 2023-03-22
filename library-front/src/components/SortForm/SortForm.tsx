@@ -28,29 +28,27 @@ const SortForm: FC<SortFormProps> = ({ bookSort, setBookSort }) => {
 
   return (
     <div className='sort-form'>
-      <label>
-        Select sort options
-        <div className='select-container'>
-          <Select
-            className='select-sort'
-            options={sortOptions}
-            value={
-              bookSort.map((s) => sortOptions.find((o) => o.value === s)) as MultiValue<SortOption>
-            }
-            onChange={handleValueChange}
-            isSearchable={true}
-            isMulti
-            isClearable={false}
-            placeholder='Select sort options...'
-            styles={{
-              menu: (baseStyles) => ({
-                ...baseStyles,
-                position: 'sticky',
-              }),
-            }}
-          />
-        </div>
-      </label>
+      <label>Select sort options</label>
+      <div className='select-container'>
+        <Select
+          className='select-sort'
+          options={sortOptions}
+          value={
+            bookSort.map((s) => sortOptions.find((o) => o.value === s)) as MultiValue<SortOption>
+          }
+          onChange={handleValueChange}
+          isSearchable={true}
+          isMulti
+          isClearable={false}
+          placeholder='Select sort options...'
+          styles={{
+            menu: (baseStyles) => ({
+              ...baseStyles,
+              position: 'sticky',
+            }),
+          }}
+        />
+      </div>
     </div>
   )
 }

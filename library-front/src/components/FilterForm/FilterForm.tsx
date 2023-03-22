@@ -61,8 +61,8 @@ const FilterForm: FC<FilterFormProps> = ({ bookFilters, setBookFilters }) => {
 
   return (
     <div className='filter-form'>
-      <label>
-        Add filter
+      <div className='filter-form-row'>
+        <label>Add filter</label>
         <div className='select-container'>
           <Select
             className='select-filter'
@@ -86,9 +86,9 @@ const FilterForm: FC<FilterFormProps> = ({ bookFilters, setBookFilters }) => {
             <AddFilterIcon size='100%' />
           </button>
         </div>
-      </label>
-      <label>
-        Filters
+      </div>
+      <div className='filter-form-row'>
+        <label>Filters</label>
         <div className='filters-container'>
           {bookFilters.map((filter) => (
             <div key={filter.id} className='filter'>
@@ -113,17 +113,20 @@ const FilterForm: FC<FilterFormProps> = ({ bookFilters, setBookFilters }) => {
             </div>
           ))}
         </div>
-      </label>
-      <div className='filter-form-footer'>
-        <button
-          type='button'
-          onClick={handleClearFilters}
-          className='clear-filters-btn'
-          title='Clear filters'
-        >
-          Clear
-        </button>
       </div>
+
+      {bookFilters.length > 0 && (
+        <div className='filter-form-footer'>
+          <button
+            type='button'
+            onClick={handleClearFilters}
+            className='clear-filters-btn'
+            title='Clear filters'
+          >
+            Clear
+          </button>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,4 +1,11 @@
 .book-search {
   width: 70%;
-  height: 25px;
+  height: 35px;
+}
+
+.book-search {
+  padding: 0.5em;
+  border: 1px solid #ddd;
+  border-radius: 0.25em;
+  font-size: 1rem;
 }

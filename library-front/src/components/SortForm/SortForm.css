@@ -1,6 +1,15 @@
 .sort-form {
   color: black;
   padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sort-form > label {
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-align: center;
 }
 
 .sort-container {

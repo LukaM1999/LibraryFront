@@ -8,8 +8,45 @@
   gap: 10px;
 }
 
+.filter-form-row {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-direction: column;
+}
+
+.filter-form-row > * {
+  width: 100%;
+}
+
+.filter-form-row > label {
+  text-align: center;
+}
+
+.filter-form-row + .filter-form-row {
+  margin-top: 1em;
+}
+
+.filter-form label {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.filter-form input {
+  width: 100%;
+  padding: 0.5em;
+  border: 1px solid #ddd;
+  border-radius: 0.25em;
+  font-size: 1rem;
+}
+
 .filter-form > label > .select-container {
   margin-top: 0.25em;
+}
+
+.filter-form .select-filter label {
+  font-weight: normal;
+  font-size: 1rem;
 }
 
 .select-filter {
@@ -66,6 +103,7 @@
   align-items: center;
   gap: 10px;
   justify-content: center;
+  width: 100%;
 }
 
 .filter-container > input {

@@ -122,6 +122,7 @@
   justify-content: center;
   gap: 20px;
   margin-bottom: 2em;
+  margin-top: 1em;
 }
 
 .modal-confirm-btn,
@@ -151,4 +152,16 @@
 
 .modal-cancel-btn:hover {
   color: #aa2723;
+}
+
+.modal .loading-spinner {
+  width: 25px;
+  height: 25px;
+  border: 0.5em solid #f3f3f3;
+  border-top: 0.5em solid #383636;
+}
+
+.modal .spinner-container {
+  display: flex;
+  justify-content: center;
 }

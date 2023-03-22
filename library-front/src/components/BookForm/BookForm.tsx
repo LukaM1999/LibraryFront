@@ -9,6 +9,7 @@ import './BookForm.css'
 
 interface BookFormProps {
   book?: Book | null
+  isLoading: boolean
   allAuthors: Author[]
   setBookFormData: React.Dispatch<React.SetStateAction<FormData | null>>
   authorData: Author | null
@@ -25,6 +26,7 @@ const maxImageSize = 5 * 1024 * 1024
 
 const BookForm: FC<BookFormProps> = ({
   book = null,
+  isLoading,
   allAuthors,
   setBookFormData,
   authorData,
@@ -155,6 +157,7 @@ const BookForm: FC<BookFormProps> = ({
         <input
           type='file'
           id='file'
+          disabled={isLoading}
           name='file'
           accept='image/png, image/jpeg, image/jpg, image/gif, image/bmp'
           ref={hiddenFileInput}
@@ -167,6 +170,7 @@ const BookForm: FC<BookFormProps> = ({
         <input
           type='text'
           required
+          disabled={isLoading}
           defaultValue={book?.Title}
           onChange={(e) => handleInputChange('Title', e.target.value)}
         />
@@ -174,7 +178,9 @@ const BookForm: FC<BookFormProps> = ({
       <div className='book-form-row'>
         <label>Description</label>
         <textarea
+          rows={6}
           defaultValue={book?.Description}
+          disabled={isLoading}
           required
           onChange={(e) => handleInputChange('Description', e.target.value)}
         />
@@ -184,6 +190,7 @@ const BookForm: FC<BookFormProps> = ({
         <input
           type='text'
           defaultValue={book?.Isbn}
+          disabled={isLoading}
           required
           onChange={(e) => handleInputChange('ISBN', e.target.value)}
         />
@@ -192,6 +199,7 @@ const BookForm: FC<BookFormProps> = ({
         <label>Publish Date</label>
         <input
           type='date'
+          disabled={isLoading}
           defaultValue={
             book?.PublishDate
               ? new Intl.DateTimeFormat('en-CA').format(new Date(book.PublishDate))
@@ -205,6 +213,7 @@ const BookForm: FC<BookFormProps> = ({
         <input
           type='number'
           min='1'
+          disabled={isLoading}
           defaultValue={book?.Quantity}
           onChange={(e) => handleInputChange('Quantity', e.target.value)}
           required
@@ -214,6 +223,7 @@ const BookForm: FC<BookFormProps> = ({
         <label>Authors</label>
         <div className='book-form-column'>
           <Select
+            isDisabled={isLoading}
             options={authorOptions}
             isMulti
             isSearchable
@@ -234,6 +244,7 @@ const BookForm: FC<BookFormProps> = ({
             className='add-author-btn'
             title='Add new author'
             onClick={showAuthorForm}
+            disabled={isLoading}
           >
             <AddAuthorIcon size='100%' />
           </button>
@@ -245,6 +256,7 @@ const BookForm: FC<BookFormProps> = ({
           <div className='book-form-row'>
             <label>Author First Name</label>
             <input
+              disabled={isLoading}
               type='text'
               value={authorData?.FirstName}
               onChange={(e) =>
@@ -259,6 +271,7 @@ const BookForm: FC<BookFormProps> = ({
             <label>Author Last Name</label>
             <input
               type='text'
+              disabled={isLoading}
               value={authorData?.LastName}
               onChange={(e) =>
                 setAuthorData((prev) => {
@@ -270,6 +283,7 @@ const BookForm: FC<BookFormProps> = ({
           </div>
           <div className='book-form-row'>
             <button
+              disabled={isLoading}
               type='button'
               className='create-author-btn'
               title='Create new author'

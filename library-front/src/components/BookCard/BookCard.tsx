@@ -19,7 +19,7 @@ const BookCard: FC<BookCardProps> = ({ book, handleDelete, handleEdit }) => {
 
   const handleBookDelete = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation()
-    if (book.Available === 0) {
+    if (book.Available < book.Quantity) {
       toast.warning("Book is currently being rented and can't be deleted")
       return
     }
@@ -72,7 +72,7 @@ const BookCard: FC<BookCardProps> = ({ book, handleDelete, handleEdit }) => {
           </p>
         </div>
         <div className='book-card-body-group'>
-          <h3>Isbn</h3>
+          <h3>ISBN</h3>
           <p>{book.Isbn}</p>
         </div>
         <div className='book-card-body-group'>

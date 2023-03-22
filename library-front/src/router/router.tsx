@@ -3,6 +3,7 @@ import App from '../App'
 import BookDetails from '../components/BookDetails/BookDetails'
 import LoginForm from '../components/LoginForm/LoginForm'
 import HomePage from '../components/pages/HomePage/HomePage'
+import { isLoggedIn } from '../services/AuthService'
 
 const router = createBrowserRouter([
   {
@@ -18,12 +19,8 @@ const router = createBrowserRouter([
         element: <LoginForm />,
       },
       {
-        path: '/profile',
-        element: <LoginForm />,
-      },
-      {
         path: '/book-details/:id',
-        element: <BookDetails />,
+        element: isLoggedIn() ? <BookDetails /> : <LoginForm />,
       },
     ],
   },

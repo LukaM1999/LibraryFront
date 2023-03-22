@@ -1,9 +1,11 @@
 import { FC, FormEvent, ReactNode, useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom'
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner'
 import './Modal.css'
 
 interface ModalProps {
   isOpen: boolean
+  isLoading: boolean
   closeModal: () => void
   confirm: (event: FormEvent<HTMLFormElement>) => void
   children: ReactNode
@@ -14,6 +16,7 @@ interface ModalProps {
 
 export const Modal: FC<ModalProps> = ({
   isOpen,
+  isLoading,
   closeModal,
   confirm,
   children,
@@ -73,7 +76,7 @@ export const Modal: FC<ModalProps> = ({
             {cancelText ?? 'Cancel'}
           </button>
           <button type='submit' className='modal-confirm-btn'>
-            {confirmText ?? 'Confirm'}
+            {!isLoading ? confirmText ? confirmText : 'Confirm' : <LoadingSpinner />}
           </button>
         </div>
       </form>

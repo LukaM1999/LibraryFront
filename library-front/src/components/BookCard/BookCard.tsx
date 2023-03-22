@@ -17,7 +17,8 @@ interface BookCardProps {
 const BookCard: FC<BookCardProps> = ({ book, handleDelete, handleEdit }) => {
   const navigate = useNavigate()
 
-  const handleBookDelete = async () => {
+  const handleBookDelete = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation()
     if (book.Available === 0) {
       toast.warning("Book is currently being rented and can't be deleted")
       return
@@ -25,11 +26,20 @@ const BookCard: FC<BookCardProps> = ({ book, handleDelete, handleEdit }) => {
     handleDelete(book)
   }
 
+  const handleBookEdit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, book: Book) => {
+    e.stopPropagation()
+    handleEdit(book)
+  }
+
   return (
-    <div className='book-card'>
+    <div onClick={() => navigate(`/book-details/${book.Id}`)} className='book-card'>
       {(isAdmin() || isLibrarian()) && (
         <div className='book-card-actions'>
-          <button onClick={() => handleEdit(book)} title='Edit book' className='book-card-btn'>
+          <button
+            onClick={(e) => handleBookEdit(e, book)}
+            title='Edit book'
+            className='book-card-btn'
+          >
             <EditIcon size='100%' />
           </button>
           <button
@@ -41,7 +51,7 @@ const BookCard: FC<BookCardProps> = ({ book, handleDelete, handleEdit }) => {
           </button>
         </div>
       )}
-      <div onClick={() => navigate(`/book-details/${book.Id}`)} className='book-card-header'>
+      <div className='book-card-header'>
         <img
           title={book.Title}
           alt={book.Title}

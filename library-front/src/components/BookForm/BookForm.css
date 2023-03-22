@@ -4,6 +4,11 @@
   overflow-y: visible;
 }
 
+.book-form label {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
 .book-form-row {
   display: flex;
   gap: 10px;
@@ -14,6 +19,11 @@
 .book-form-row > * {
   width: 100%;
   text-align: center;
+}
+
+.book-form-row.author-form {
+  padding-top: 1em;
+  border-top: 1px solid #ddd;
 }
 
 .book-form-row + .book-form-row {

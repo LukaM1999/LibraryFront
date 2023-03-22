@@ -8,6 +8,7 @@
   margin: 5px;
   overflow: hidden;
   box-shadow: 0 2px 5px 0 rgba(255, 255, 255, 0.3);
+  cursor: pointer;
 }
 
 .book-card-header {
@@ -26,7 +27,6 @@
   object-fit: cover;
   transition: 200ms transform ease-in-out;
   z-index: 1;
-  cursor: pointer;
 }
 
 .book-card:hover > .book-card-header > img {

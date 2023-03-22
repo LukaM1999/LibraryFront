@@ -240,7 +240,7 @@ const BookForm: FC<BookFormProps> = ({
         </div>
       </div>
       {authorData && (
-        <div className='book-form-row'>
+        <div className='book-form-row author-form'>
           <label>New Author</label>
           <div className='book-form-row'>
             <label>Author First Name</label>

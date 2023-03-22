@@ -149,7 +149,7 @@ const BookDetails: FC<BookDetailsProps> = () => {
   }
 
   return (
-    <>
+    <div>
       <div className='book-details'>
         <BookFormWrapper
           closeModal={() => setIsModalVisible(false)}
@@ -182,7 +182,7 @@ const BookDetails: FC<BookDetailsProps> = () => {
             <label>Publish Date</label>
             <p>
               {book?.PublishDate
-                ? new Intl.DateTimeFormat('en-US').format(new Date(book?.PublishDate))
+                ? new Intl.DateTimeFormat('sr-RS').format(new Date(book?.PublishDate))
                 : ''}
             </p>
           </div>
@@ -225,39 +225,39 @@ const BookDetails: FC<BookDetailsProps> = () => {
             )}
           </div>
         </div>
-        <div className='book-rent-history'>
-          <h2>Rent history</h2>
-          <table>
-            <thead>
-              <tr>
-                <th scope='col'>Rent Date</th>
-                <th scope='col'>Renter Email</th>
-                <th scope='col'>Return</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rentHistoryData?.map((rentHistory: RentalHistoryResponse) => (
-                <tr key={rentHistory.Id}>
-                  <td data-label='Rent Date' scope='row'>
-                    {new Intl.DateTimeFormat('sr-RS').format(new Date(rentHistory.RentDate))}
-                  </td>
-                  <td data-label='Renter Email'>{rentHistory.User.Email}</td>
-                  <td data-label='Return'>
-                    {rentHistory.IsReturned ? (
-                      'Returned'
-                    ) : (
-                      <button type='button' onClick={() => openReturnDialog(rentHistory.Id)}>
-                        Return
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       </div>
-    </>
+      <div className='book-rent-history'>
+        <h2>Rent history</h2>
+        <table>
+          <thead>
+            <tr>
+              <th scope='col'>Rent Date</th>
+              <th scope='col'>Renter Email</th>
+              <th scope='col'>Return</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rentHistoryData?.map((rentHistory: RentalHistoryResponse) => (
+              <tr key={rentHistory.Id}>
+                <td data-label='Rent Date' scope='row'>
+                  {new Intl.DateTimeFormat('sr-RS').format(new Date(rentHistory.RentDate))}
+                </td>
+                <td data-label='Renter Email'>{rentHistory.User.Email}</td>
+                <td data-label='Return'>
+                  {rentHistory.IsReturned
+                    ? 'Returned'
+                    : (isAdmin() || isLibrarian()) && (
+                        <button type='button' onClick={() => openReturnDialog(rentHistory.Id)}>
+                          Return
+                        </button>
+                      )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   )
 }
 
